@@ -8,6 +8,8 @@ declare global {
       companionStatus: () => Promise<CompanionStatus>
       makeCrosspoint: (request: CrosspointRequest) => Promise<void>
       clearCrosspoint: (destinationChannel: string, destinationDevice: string) => Promise<void>
+      startAudioMonitor: (channelId: string) => Promise<void>
+      stopAudioMonitor: (channelId: string) => Promise<void>
     }
   }
 }

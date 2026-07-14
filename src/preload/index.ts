@@ -12,7 +12,11 @@ const api = {
   makeCrosspoint: (request: CrosspointRequest): Promise<void> =>
     ipcRenderer.invoke('mic-monitor:make-crosspoint', request),
   clearCrosspoint: (destinationChannel: string, destinationDevice: string): Promise<void> =>
-    ipcRenderer.invoke('mic-monitor:clear-crosspoint', destinationChannel, destinationDevice)
+    ipcRenderer.invoke('mic-monitor:clear-crosspoint', destinationChannel, destinationDevice),
+  startAudioMonitor: (channelId: string): Promise<void> =>
+    ipcRenderer.invoke('mic-monitor:start-audio-monitor', channelId),
+  stopAudioMonitor: (channelId: string): Promise<void> =>
+    ipcRenderer.invoke('mic-monitor:stop-audio-monitor', channelId)
 }
 
 export type MicMonitorApi = typeof api

@@ -42,6 +42,7 @@ export type MainToRendererEvent =
   | { type: 'device-removed'; deviceId: string }
   | { type: 'usb-route-updated'; route: UsbRoute }
   | { type: 'discovery-status'; scanning: boolean; message?: string }
+  | { type: 'audio-chunk'; channelId: string; samples: Float32Array; sampleRate: number }
 
 export interface CompanionButtonLocation {
   page: number

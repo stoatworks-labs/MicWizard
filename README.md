@@ -8,9 +8,10 @@
 
 An Electron app that discovers Shure and Sennheiser wireless mic receivers on the
 local network, monitors their audio levels (via AES67) and battery/RF status, and
-(planned) routes audio in from a USB soundcard for receivers that don't have
-network audio at all. Optional Dante route triggering is available by pointing it
-at your own Bitfocus Companion instance - see below.
+lets you cue any channel to your own headphones or a Bluetooth speaker - including
+analog-only receivers patched into a USB interface. Optional Dante route
+triggering is also available by pointing it at your own Bitfocus Companion
+instance - see below, and note that's a separate feature from local monitoring.
 
 ![Wireless Mic Monitor showing Shure and Sennheiser receivers, an AES67 console feed, and the Companion routing panel](docs/screenshots/main-view.png)
 
@@ -45,6 +46,11 @@ What's implemented and structurally complete:
   more speculative than Shure; see the file's doc comment.
 - **USB input metering** ([src/renderer/src/audio/usbAudio.ts](src/renderer/src/audio/usbAudio.ts)) -
   Web Audio API capture + level metering, no native audio addon required.
+- **Local headphone/speaker monitoring** ([src/renderer/src/audio/monitorEngine.ts](src/renderer/src/audio/monitorEngine.ts)) -
+  a headphone icon next to every channel cues that channel's audio to a local
+  output device you pick. See [Local monitoring](#local-monitoring-headphone-cue-not-dante-routing)
+  below - this is a different feature from the Companion-based Dante routing
+  panel, and easy to conflate with it.
 
 What's blocked or not started:
 
@@ -52,9 +58,41 @@ What's blocked or not started:
   application (manual approval, NDA, license terms). See
   [src/main/audio/danteApi.ts](src/main/audio/danteApi.ts) for what this unlocks
   over AES67 and why nobody can just fetch the SDK on your behalf.
-- **USB output routing** (sending audio back out to hardware, not just metering
-  an input) - not designed yet.
-- Real-hardware validation of every adapter above.
+- Real-hardware validation of the discovery/metering adapters (Shure, Sennheiser,
+  AES67 decode - see [Protocol status](#protocol-status)).
+
+## Local monitoring (headphone cue) - not Dante routing
+
+Every channel in the device list has a 🎧 button. This is entirely local and
+has nothing to do with the network audio matrix or the Companion feature
+below - clicking it plays that channel's audio out of whichever output
+device you've picked in the bar above the device list (built-in speakers,
+wired headphones, a paired Bluetooth speaker - anything the OS shows as an
+audio output).
+
+- **AES67 channels** play directly: the main process already decodes RTP
+  into PCM for level metering, and now forwards the raw samples to the
+  renderer - but only for channels someone's actually cueing, so idle
+  channels don't cost anything extra. Playback is chunk-scheduled
+  `AudioBufferSourceNode`s, not an `AudioWorklet` ring buffer, so treat it as
+  "good enough to check a mic," not glitch-free broadcast monitoring.
+- **Receivers with no network audio at all** (older/cheaper analog-only
+  Shure/Sennheiser units) need a one-time mapping: physically patch that
+  receiver's output into a channel on a USB audio interface, then click its
+  🎧 button once to pick which USB input feeds it. That mapping is
+  remembered (`localStorage`, keyed by channel) so you only do it once per
+  receiver. As noted in [usbAudio.ts](src/renderer/src/audio/usbAudio.ts):
+  Web Audio's `getUserMedia` generally can't isolate one channel out of a
+  multichannel interface, so this works best with a dedicated 1-2 channel
+  interface per receiver, or an interface whose channel pairs macOS/Windows
+  already expose as separate devices.
+- By default, cueing a channel is **solo** - starting one stops whatever else
+  was playing, like a console's PFL. Flip the toggle in the monitor bar to
+  mix multiple channels together instead.
+
+This was validated with a synthetic SAP+RTP sender (no real Dante hardware
+on hand) - see the AES67 row in [Protocol status](#protocol-status) below for
+exactly what that did and didn't prove.
 
 ## Dante routing: this app has none, on purpose - it presses buttons in your Companion instead
 
@@ -133,7 +171,7 @@ default), and Shure receivers need to be on the same /24 subnet as your machine
 
 | Vendor / transport | Discovery | Metering | Confidence |
 |---|---|---|---|
-| Dante/AES67 (any vendor) | mDNS, verified in Dante-BabelBox | AES67 RTP multicast, SAP-announced | Discovery verified; audio decode logic untested against a real AES67 sender |
+| Dante/AES67 (any vendor) | mDNS, verified in Dante-BabelBox | AES67 RTP multicast, SAP-announced | Discovery verified against real Dante gear; SAP parsing + RTP/L16 decode + level math verified end-to-end against a synthetic sender (hand-crafted SAP announcement and RTP packets, checked the decoded sample amplitude matched exactly). Still not tested against a real Dante/AES67 hardware sender - synthetic traffic can't catch every real-world quirk (L24, odd frame sizes, jitter, real SDP variations) |
 | Shure (ULX-D/QLX-D/Axient Digital) | TCP subnet scan, port 2202 | Command Strings protocol (Shure-published PDFs) | Protocol is documented; **not tested against real receivers** |
 | Sennheiser (EW-DX/Digital 6000/9000) | mDNS `_ssc._tcp` | SSC (JSON over TCP) | Speculative - exact metering paths are best-effort guesses, needs a packet capture against real hardware to correct |
 | Full Dante API | - | - | Blocked on Audinate Developer Program approval, see above |

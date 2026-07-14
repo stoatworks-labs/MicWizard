@@ -20,6 +20,40 @@ body {
   margin-top: -8px;
 }
 
+.monitor-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: #1a1d26;
+  border: 1px solid #2a2e3a;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #9aa1b2;
+}
+
+.monitor-bar__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monitor-bar__field select {
+  background: #232733;
+  color: #e8eaf0;
+  border: 1px solid #2a2e3a;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.monitor-bar__toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .device-list {
   display: flex;
   flex-direction: column;
@@ -83,11 +117,53 @@ body {
 
 .channel-row {
   display: grid;
-  grid-template-columns: 120px 1fr 1fr 160px;
+  grid-template-columns: 120px 1fr 1fr 160px 90px;
   align-items: center;
   gap: 12px;
   padding: 8px 0;
   border-top: 1px solid #232733;
+}
+
+.channel-monitor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.channel-monitor__button {
+  background: #232733;
+  border: 1px solid #2a2e3a;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.channel-monitor__button--active {
+  background: #2d4a2f;
+  border-color: #3fae5a;
+  opacity: 1;
+}
+
+.channel-monitor select {
+  background: #232733;
+  color: #e8eaf0;
+  border: 1px solid #2a2e3a;
+  border-radius: 6px;
+  font-size: 11px;
+  padding: 4px;
+  max-width: 120px;
+}
+
+.channel-monitor__unmap {
+  background: transparent;
+  border: none;
+  color: #6b7080;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 2px;
 }
 
 .level-meter {

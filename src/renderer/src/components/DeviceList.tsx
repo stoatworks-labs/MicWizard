@@ -1,6 +1,7 @@
 import type { DiscoveredDevice } from '../../../shared/types'
 import { LevelMeter } from './LevelMeter'
 import { BatteryIndicator } from './BatteryIndicator'
+import { ChannelMonitorButton } from './ChannelMonitorButton'
 
 const VENDOR_LABEL: Record<DiscoveredDevice['vendor'], string> = {
   shure: 'Shure',
@@ -36,6 +37,7 @@ export function DeviceList({ devices }: { devices: DiscoveredDevice[] }): JSX.El
                 <LevelMeter label="Audio" db={channel.audioLevelDb} />
                 {channel.rfLevel !== null && <LevelMeter label="RF" db={channel.rfLevel - 100} />}
                 <BatteryIndicator percent={channel.batteryPercent} minutesRemaining={channel.batteryMinutesRemaining} />
+                <ChannelMonitorButton channel={channel} hasNetworkAudio={device.transport === 'aes67'} />
               </div>
             ))}
           </div>

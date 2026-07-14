@@ -12,6 +12,8 @@ export interface ChannelLevelUpdate {
 
 export interface Aes67StreamHandle {
   stop: () => void
+  /** Raw per-channel samples are only decoded and forwarded for channels someone has asked to monitor - not by default, to avoid the IPC/CPU cost when nobody's listening */
+  setSampleStreaming: (channelIndex: number, enabled: boolean) => void
 }
 
 /**
@@ -22,10 +24,12 @@ export interface Aes67StreamHandle {
  */
 export function monitorAes67Stream(
   session: Aes67SessionInfo,
-  onLevels: (updates: ChannelLevelUpdate[]) => void
+  onLevels: (updates: ChannelLevelUpdate[]) => void,
+  onSamples: (channelIndex: number, samples: Float32Array, sampleRate: number) => void
 ): Aes67StreamHandle {
   const bytesPerSample = session.encoding === 'L24' ? 3 : 2
   const smoothers = Array.from({ length: session.channelCount }, () => new LevelSmoother())
+  const streamingChannels = new Set<number>()
 
   const socket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
   socket.on('message', (msg) => {
@@ -34,6 +38,7 @@ export function monitorAes67Stream(
 
     const updates: ChannelLevelUpdate[] = frames.map((samples, channelIndex) => {
       const { rmsDb, peakDb } = computeLevels(samples)
+      if (streamingChannels.has(channelIndex)) onSamples(channelIndex, samples, session.sampleRate)
       return {
         channelIndex,
         smoothedDb: smoothers[channelIndex].push(rmsDb),
@@ -47,7 +52,13 @@ export function monitorAes67Stream(
     socket.addMembership(session.multicastAddress)
   })
 
-  return { stop: () => socket.close() }
+  return {
+    stop: () => socket.close(),
+    setSampleStreaming: (channelIndex, enabled) => {
+      if (enabled) streamingChannels.add(channelIndex)
+      else streamingChannels.delete(channelIndex)
+    }
+  }
 }
 
 /** Deinterleaves one RTP packet's PCM payload into per-channel Float32Arrays in [-1, 1] */

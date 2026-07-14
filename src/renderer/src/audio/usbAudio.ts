@@ -28,6 +28,12 @@ export async function listUsbAudioInputs(): Promise<MediaDeviceInfo[]> {
   return devices.filter((d) => d.kind === 'audioinput')
 }
 
+/** For the local-monitoring output picker (headphones, a Bluetooth speaker, etc.) - unrelated to Dante routing */
+export async function listAudioOutputs(): Promise<MediaDeviceInfo[]> {
+  const devices = await navigator.mediaDevices.enumerateDevices()
+  return devices.filter((d) => d.kind === 'audiooutput')
+}
+
 export class UsbInputMonitor {
   private audioContext: AudioContext | null = null
   private analyser: AnalyserNode | null = null
