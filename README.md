@@ -1,4 +1,4 @@
-# Wireless Mic Monitor
+# MicWizard
 
 > **AI-assisted project.** This codebase was created with [Claude Code](https://claude.com/claude-code)
 > (Anthropic). Protocol adapters are built against a mix of publicly documented specs
@@ -13,7 +13,7 @@ analog-only receivers patched into a USB interface. Optional Dante route
 triggering is also available by pointing it at your own Bitfocus Companion
 instance - see below, and note that's a separate feature from local monitoring.
 
-![Wireless Mic Monitor showing Shure and Sennheiser receivers, an AES67 console feed, and the Companion routing panel](docs/screenshots/main-view.png)
+![MicWizard showing Shure and Sennheiser receivers, an AES67 console feed, local headphone monitoring, and the Companion routing panel](docs/screenshots/main-view.png)
 
 *Mockup with simulated data - captured from the real running app's own renderer
 (not a hand-drawn design), but no real hardware is on this network. See
@@ -142,7 +142,7 @@ Setup:
    `$(custom:dante_dst_channel)` / `$(custom:dante_dst_device)` treatment.
 4. Copy [companion-routes.example.json](companion-routes.example.json) to
    `companion-routes.json` in this app's user data folder (macOS:
-   `~/Library/Application Support/wireless-mic-monitor/`). Fill in your
+   `~/Library/Application Support/MicWizard/`). Fill in your
    Companion host/port and the page/row/column of the button(s) from steps
    2-3. `variablePrefix` must match what you used above (`dante` by default -
    change it in both places together if you want something else).

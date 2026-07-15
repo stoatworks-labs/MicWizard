@@ -5,7 +5,7 @@
  * this is a monitoring convenience, not something the main process or
  * device registry needs to know about.
  */
-const STORAGE_KEY = 'wireless-mic-monitor:usb-channel-map'
+const STORAGE_KEY = 'micwizard:usb-channel-map'
 
 function readAll(): Record<string, string> {
   try {

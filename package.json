@@ -1,5 +1,6 @@
 {
-  "name": "wireless-mic-monitor",
+  "name": "micwizard",
+  "productName": "MicWizard",
   "version": "0.1.0",
   "description": "Discover networked wireless mic receivers, monitor Dante/AES67 audio levels and battery status, and route USB soundcard inputs for non-Dante devices.",
   "private": true,

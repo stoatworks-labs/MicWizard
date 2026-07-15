@@ -15,7 +15,7 @@ export function App(): JSX.Element {
   return (
     <div className="app">
       <header className="app__header">
-        <h1>Wireless Mic Monitor</h1>
+        <h1>MicWizard</h1>
         <p>Discovering Shure, Sennheiser, and AES67/Dante devices on the local network.</p>
       </header>
       <main>
