@@ -16,14 +16,25 @@ instance - see below, and note that's a separate feature from local monitoring.
 ![MicWizard showing Shure and Sennheiser receivers, an AES67 console feed, local headphone monitoring, and the Companion routing panel](docs/screenshots/main-view.png)
 
 *Mockup with simulated data - captured from the real running app's own renderer
-(not a hand-drawn design), but no real hardware is on this network. See
-[AI disclosure](#ai-disclosure) below.*
+(not a hand-drawn design), but no real hardware is on this network.*
 
 Same spirit as this author's other radio-mic tools -
 [wsm-wwb-bridge](https://github.com/allansargeant/wsm-wwb-bridge) (frequency
 coordination file exchange) and [Dante-BabelBox](https://github.com/allansargeant/Dante-BabelBox)
 (cross-vendor Dante preamp control) - but for real-time monitoring instead of file
 exchange or gain control.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    MDNS["mDNS discovery<br/>Dante/AES67 + Sennheiser SSC"] --> REG["Device registry<br/>(main process)"]
+    SHURE["Shure TCP scan<br/>(port 2202)"] --> REG
+    SAP["AES67 SAP + RTP<br/>L16/L24 decode, RMS/peak"] --> REG
+    REG -- IPC --> UI["Renderer UI<br/>device list + meters"]
+    UI --> MON["Local monitor engine<br/>headphone / Bluetooth cue"]
+    UI --> COMP["Companion HTTP client<br/>optional Dante route trigger"]
+```
 
 ## Status: early scaffold, not yet tested against real hardware
 
@@ -181,11 +192,9 @@ enabled: see [docs/data-captures.md](docs/data-captures.md) for exactly what
 packet capture would help, and how to take one - it's simpler than it sounds,
 no special network gear or bridging required.
 
-## AI disclosure
+## Roadmap / TODO
 
-Claude wrote the majority of this codebase - discovery adapters, the AES67
-decoder, IPC plumbing, and the renderer UI - working interactively with the repo
-owner, who directed scope and reviewed the output. The protocol adapters mix
-publicly documented specs (Shure Command Strings, Dante's mDNS service types) with
-best-effort reconstruction from public examples (Sennheiser SSC); treat this as
-AI-assisted rather than independently audited, especially before use on live gear.
+- [ ] **Validate discovery/metering against real hardware** — Shure and Sennheiser adapters are documented/speculative but untested on real receivers; AES67 decode verified only against a synthetic sender.
+- [ ] **Correct the Sennheiser SSC metering paths** — currently best-effort guesses; needs a packet capture against real EW-DX/6000/9000 hardware.
+- [ ] **Full Dante API integration** — blocked on Audinate Developer Program approval (NDA/license); unlocks what AES67 can't reach.
+- [ ] **Glitch-free monitoring** — move headphone-cue playback from chunk-scheduled buffers to an AudioWorklet ring buffer for broadcast-grade audio.
