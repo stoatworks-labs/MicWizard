@@ -1,0 +1,33 @@
+appId: com.allansargeant.micwizard
+productName: MicWizard
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+mac:
+  category: public.app-category.music
+  target:
+    - target: dmg
+    - target: zip
+  notarize: false
+win:
+  target:
+    - target: nsis
+nsis:
+  artifactName: ${name}-${version}-${arch}-setup.${ext}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+linux:
+  category: AudioVideo
+  maintainer: Allan Sargeant <allan.sargeant@gmail.com>
+  target:
+    - target: deb
+    - target: rpm
+    - target: AppImage
+npmRebuild: false
+publish: null
