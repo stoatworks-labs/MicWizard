@@ -3,15 +3,12 @@ import type { DiscoveredDevice } from '../../shared/types'
 
 interface DeviceStoreState {
   devices: Map<string, DiscoveredDevice>
-  scanning: boolean
   upsert: (device: DiscoveredDevice) => void
   remove: (deviceId: string) => void
-  setScanning: (scanning: boolean) => void
 }
 
 export const useDeviceStore = create<DeviceStoreState>((set) => ({
   devices: new Map(),
-  scanning: false,
   upsert: (device) =>
     set((state) => {
       const devices = new Map(state.devices)
@@ -23,8 +20,7 @@ export const useDeviceStore = create<DeviceStoreState>((set) => ({
       const devices = new Map(state.devices)
       devices.delete(deviceId)
       return { devices }
-    }),
-  setScanning: (scanning) => set({ scanning })
+    })
 }))
 
 export function connectDeviceStore(): () => void {
@@ -40,9 +36,6 @@ export function connectDeviceStore(): () => void {
         break
       case 'device-removed':
         store.remove(event.deviceId)
-        break
-      case 'discovery-status':
-        store.setScanning(event.scanning)
         break
     }
   })

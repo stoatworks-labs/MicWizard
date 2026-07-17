@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { DeviceRegistry } from './deviceRegistry'
 import { startMdnsDiscovery } from './discovery/mdns'
 import { startShureDiscovery } from './discovery/shure'
+import { connectSennheiserDevice } from './discovery/sennheiser'
 import { SapListener } from './audio/sap'
 import { monitorAes67Stream } from './audio/aes67'
 import { loadCompanionConfig } from './companion/routesConfig'
@@ -12,6 +13,7 @@ import type { CompanionStatus, CrosspointRequest, MainToRendererEvent } from '..
 const registry = new DeviceRegistry()
 let broadcastEvent: ((event: MainToRendererEvent) => void) | null = null
 const aes67Streams = new Map<string, ReturnType<typeof monitorAes67Stream>>()
+const sennheiserConnections = new Map<string, ReturnType<typeof connectSennheiserDevice>>()
 
 /** channelId format is `aes67:<sessionId>:<channelIndex>` - see startDiscovery() */
 function parseAes67ChannelId(channelId: string): { sessionId: string; channelIndex: number } | null {
@@ -44,7 +46,13 @@ function createWindow(): void {
 }
 
 function startDiscovery(): void {
-  const mdns = startMdnsDiscovery(registry)
+  const mdns = startMdnsDiscovery(registry, (address, _port) => {
+    if (sennheiserConnections.has(address)) return
+    sennheiserConnections.set(
+      address,
+      connectSennheiserDevice(address, registry, () => sennheiserConnections.delete(address))
+    )
+  })
   const shure = startShureDiscovery(registry)
 
   const sap = new SapListener()
@@ -99,6 +107,7 @@ function startDiscovery(): void {
     shure.stop()
     sap.stop()
     for (const handle of aes67Streams.values()) handle.stop()
+    for (const handle of sennheiserConnections.values()) handle.stop()
     clearInterval(pruneTimer)
   })
 }

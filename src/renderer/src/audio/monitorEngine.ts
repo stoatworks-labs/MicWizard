@@ -30,6 +30,8 @@ class MonitorEngine {
   private audioContext: AudioContextWithSink | null = null
   private masterGain: GainNode | null = null
   private active = new Map<string, ActiveMonitor>()
+  /** Channels currently mid-start (awaiting startAudioMonitor/getUserMedia) - guards against a rapid double-click starting two overlapping monitors for the same channel, the second of which would silently leak since active.set() would overwrite the first's handle */
+  private pending = new Set<string>()
   private soloMode = true
   private listeners = new Set<() => void>()
   private outputDeviceId: string | null = null
@@ -85,36 +87,43 @@ class MonitorEngine {
       this.stop(channelId)
       return
     }
-    if (this.soloMode) this.stopAll()
+    if (this.pending.has(channelId)) return
+    this.pending.add(channelId)
 
-    const { ctx, master } = this.ensureContext()
-    await ctx.resume()
-    await window.micMonitor.startAudioMonitor(channelId)
+    try {
+      if (this.soloMode) this.stopAll()
 
-    const gain = ctx.createGain()
-    gain.connect(master)
-    let nextStartTime = ctx.currentTime
+      const { ctx, master } = this.ensureContext()
+      await ctx.resume()
+      await window.micMonitor.startAudioMonitor(channelId)
 
-    const unsubscribe = window.micMonitor.onEvent((event: MainToRendererEvent) => {
-      if (event.type !== 'audio-chunk' || event.channelId !== channelId) return
-      const buffer = ctx.createBuffer(1, event.samples.length, event.sampleRate)
-      buffer.copyToChannel(new Float32Array(event.samples), 0)
-      const source = ctx.createBufferSource()
-      source.buffer = buffer
-      source.connect(gain)
-      const startAt = Math.max(nextStartTime, ctx.currentTime)
-      source.start(startAt)
-      nextStartTime = startAt + buffer.duration
-    })
+      const gain = ctx.createGain()
+      gain.connect(master)
+      let nextStartTime = ctx.currentTime
 
-    this.active.set(channelId, {
-      stop: () => {
-        unsubscribe()
-        gain.disconnect()
-        void window.micMonitor.stopAudioMonitor(channelId)
-      }
-    })
-    this.notify()
+      const unsubscribe = window.micMonitor.onEvent((event: MainToRendererEvent) => {
+        if (event.type !== 'audio-chunk' || event.channelId !== channelId) return
+        const buffer = ctx.createBuffer(1, event.samples.length, event.sampleRate)
+        buffer.copyToChannel(new Float32Array(event.samples), 0)
+        const source = ctx.createBufferSource()
+        source.buffer = buffer
+        source.connect(gain)
+        const startAt = Math.max(nextStartTime, ctx.currentTime)
+        source.start(startAt)
+        nextStartTime = startAt + buffer.duration
+      })
+
+      this.active.set(channelId, {
+        stop: () => {
+          unsubscribe()
+          gain.disconnect()
+          void window.micMonitor.stopAudioMonitor(channelId)
+        }
+      })
+      this.notify()
+    } finally {
+      this.pending.delete(channelId)
+    }
   }
 
   async toggleUsb(channelId: string, usbDeviceId: string): Promise<void> {
@@ -122,32 +131,39 @@ class MonitorEngine {
       this.stop(channelId)
       return
     }
-    if (this.soloMode) this.stopAll()
+    if (this.pending.has(channelId)) return
+    this.pending.add(channelId)
 
-    const { ctx, master } = this.ensureContext()
-    await ctx.resume()
+    try {
+      if (this.soloMode) this.stopAll()
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        deviceId: { exact: usbDeviceId },
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false
-      }
-    })
-    const source = ctx.createMediaStreamSource(stream)
-    const gain = ctx.createGain()
-    source.connect(gain)
-    gain.connect(master)
+      const { ctx, master } = this.ensureContext()
+      await ctx.resume()
 
-    this.active.set(channelId, {
-      stop: () => {
-        stream.getTracks().forEach((track) => track.stop())
-        source.disconnect()
-        gain.disconnect()
-      }
-    })
-    this.notify()
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: { exact: usbDeviceId },
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        }
+      })
+      const source = ctx.createMediaStreamSource(stream)
+      const gain = ctx.createGain()
+      source.connect(gain)
+      gain.connect(master)
+
+      this.active.set(channelId, {
+        stop: () => {
+          stream.getTracks().forEach((track) => track.stop())
+          source.disconnect()
+          gain.disconnect()
+        }
+      })
+      this.notify()
+    } finally {
+      this.pending.delete(channelId)
+    }
   }
 
   stop(channelId: string): void {

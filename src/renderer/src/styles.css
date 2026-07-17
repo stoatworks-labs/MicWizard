@@ -147,6 +147,12 @@ body {
   opacity: 1;
 }
 
+.channel-monitor__button--error {
+  background: #3d1f1f;
+  border-color: #e08080;
+  opacity: 1;
+}
+
 .channel-monitor select {
   background: #232733;
   color: #e8eaf0;

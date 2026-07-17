@@ -40,7 +40,7 @@ export class CompanionClient {
 
   async checkReachable(): Promise<boolean> {
     try {
-      const res = await fetchWithTimeout(`${this.baseUrl()}/api/custom-variable/wmm-reachability-check/value`, {
+      const res = await fetchWithTimeout(`${this.baseUrl()}/api/custom-variable/micwizard-reachability-check/value`, {
         method: 'GET'
       })
       // Any HTTP response at all - even a 404 for an unknown variable -

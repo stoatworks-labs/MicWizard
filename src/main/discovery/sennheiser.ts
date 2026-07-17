@@ -28,13 +28,30 @@ export interface SennheiserDiscoveryHandle {
   stop: () => void
 }
 
+/**
+ * onDisconnected fires exactly once, on error OR close (whichever comes
+ * first - the other is a no-op via the `disconnected` guard), so callers
+ * tracking active connections by address (see main/index.ts) can drop
+ * their reference and allow a future mDNS re-discovery to reconnect. Without
+ * this, a device that drops for any reason (reboot, brief network blip)
+ * would stay permanently un-monitored until the app restarts.
+ */
 export function connectSennheiserDevice(
   address: string,
-  registry: DeviceRegistry
+  registry: DeviceRegistry,
+  onDisconnected: () => void
 ): SennheiserDiscoveryHandle {
   const deviceId = `sennheiser:${address}`
   const socket = net.createConnection({ host: address, port: SSC_PORT })
   let buffer = ''
+  let disconnected = false
+
+  const handleDisconnect = (): void => {
+    if (disconnected) return
+    disconnected = true
+    registry.remove(deviceId)
+    onDisconnected()
+  }
 
   socket.on('connect', () => {
     sendPath(socket, { osc: { rx: { 1: { identity: { name: null, product: null } } } } })
@@ -54,8 +71,8 @@ export function connectSennheiserDevice(
     }
   })
 
-  socket.on('error', () => registry.remove(deviceId))
-  socket.on('close', () => registry.remove(deviceId))
+  socket.on('error', handleDisconnect)
+  socket.on('close', handleDisconnect)
 
   return { stop: () => socket.end() }
 }

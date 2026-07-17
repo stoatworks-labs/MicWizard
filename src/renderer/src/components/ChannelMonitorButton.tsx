@@ -22,19 +22,25 @@ export function ChannelMonitorButton({
     hasNetworkAudio ? null : getUsbDeviceForChannel(channel.id)
   )
   const [usbInputs, setUsbInputs] = useState<MediaDeviceInfo[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => monitorEngine.onChange(() => setMonitoring(monitorEngine.isMonitoring(channel.id))), [channel.id])
 
   const toggle = async (): Promise<void> => {
-    if (hasNetworkAudio) {
-      await monitorEngine.toggleAes67(channel.id)
-      return
+    setError(null)
+    try {
+      if (hasNetworkAudio) {
+        await monitorEngine.toggleAes67(channel.id)
+        return
+      }
+      if (mappedDevice) {
+        await monitorEngine.toggleUsb(channel.id, mappedDevice)
+        return
+      }
+      setUsbInputs(await listUsbAudioInputs())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
     }
-    if (mappedDevice) {
-      await monitorEngine.toggleUsb(channel.id, mappedDevice)
-      return
-    }
-    setUsbInputs(await listUsbAudioInputs())
   }
 
   const pickUsbDevice = async (deviceId: string): Promise<void> => {
@@ -45,7 +51,12 @@ export function ChannelMonitorButton({
     setUsbDeviceForChannel(channel.id, deviceId)
     setMappedDevice(deviceId)
     setUsbInputs(null)
-    await monitorEngine.toggleUsb(channel.id, deviceId)
+    setError(null)
+    try {
+      await monitorEngine.toggleUsb(channel.id, deviceId)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    }
   }
 
   const removeMapping = (): void => {
@@ -54,12 +65,20 @@ export function ChannelMonitorButton({
     setMappedDevice(null)
   }
 
+  const title = error
+    ? error
+    : hasNetworkAudio
+      ? 'Listen on headphones'
+      : mappedDevice
+        ? 'Listen on headphones'
+        : 'Map to a USB input first'
+
   return (
     <div className="channel-monitor">
       <button
-        className={`channel-monitor__button ${monitoring ? 'channel-monitor__button--active' : ''}`}
+        className={`channel-monitor__button ${monitoring ? 'channel-monitor__button--active' : ''} ${error ? 'channel-monitor__button--error' : ''}`}
         onClick={toggle}
-        title={hasNetworkAudio ? 'Listen on headphones' : mappedDevice ? 'Listen on headphones' : 'Map to a USB input first'}
+        title={title}
       >
         🎧
       </button>

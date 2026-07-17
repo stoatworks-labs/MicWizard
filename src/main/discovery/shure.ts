@@ -42,6 +42,11 @@ export function startShureDiscovery(registry: DeviceRegistry): ShureDiscoveryHan
           const reachable = await probe(host)
           if (!reachable || stopped) return
           const client = new ShureDeviceClient(host, registry)
+          // Without this, a device that drops for any reason (reboot, a
+          // brief network blip) stays permanently un-monitored: the stale
+          // Map entry would block every future rescan from ever retrying
+          // this host, even once it's reachable again.
+          client.once('disconnected', () => activeClients.delete(host))
           activeClients.set(host, client)
           client.start()
         })
@@ -91,6 +96,7 @@ function probe(host: string): Promise<boolean> {
 class ShureDeviceClient extends EventEmitter {
   private socket: net.Socket | null = null
   private buffer = ''
+  private disconnected = false
 
   constructor(private readonly host: string, private readonly registry: DeviceRegistry) {
     super()
@@ -100,8 +106,8 @@ class ShureDeviceClient extends EventEmitter {
     const socket = net.createConnection({ host: this.host, port: SHURE_COMMAND_PORT })
     socket.setEncoding('utf8')
     socket.on('data', (chunk: string) => this.handleData(chunk))
-    socket.on('error', () => this.registry.remove(this.deviceId))
-    socket.on('close', () => this.registry.remove(this.deviceId))
+    socket.on('error', () => this.handleDisconnect())
+    socket.on('close', () => this.handleDisconnect())
     socket.on('connect', () => {
       // Ask for full state, then subscribe to periodic samples (documented
       // Shure command; period is in ms, 500ms is a conservative default).
@@ -120,15 +126,29 @@ class ShureDeviceClient extends EventEmitter {
     return `shure:${this.host}`
   }
 
+  /** Fires once on error OR close, whichever comes first - see the comment at the call site in startShureDiscovery */
+  private handleDisconnect(): void {
+    if (this.disconnected) return
+    this.disconnected = true
+    this.registry.remove(this.deviceId)
+    this.emit('disconnected')
+  }
+
   private handleData(chunk: string): void {
     this.buffer += chunk
-    let start = this.buffer.indexOf('<')
-    let end = this.buffer.indexOf('>')
-    while (start !== -1 && end !== -1 && end > start) {
+    for (;;) {
+      const start = this.buffer.indexOf('<')
+      if (start === -1) {
+        this.buffer = '' // no message start pending - drop any stray leading garbage
+        return
+      }
+      // Search for '>' from `start`, not from the top of the buffer: a
+      // stray '>' earlier than the first '<' would otherwise make `end`
+      // land before `start` and stall parsing forever on that leftover byte.
+      const end = this.buffer.indexOf('>', start)
+      if (end === -1) return // incomplete message, wait for more data
       this.handleMessage(this.buffer.slice(start + 1, end).trim())
       this.buffer = this.buffer.slice(end + 1)
-      start = this.buffer.indexOf('<')
-      end = this.buffer.indexOf('>')
     }
   }
 
@@ -146,10 +166,10 @@ class ShureDeviceClient extends EventEmitter {
     const channel: DeviceChannel = {
       id: `${this.deviceId}:${channelNum}`,
       name: fields.get('CHAN_NAME') ?? `Channel ${channelNum}`,
-      rfLevel: parsePercent(fields.get('RF_LVL_A') ?? fields.get('RF_LVL')),
+      rfLevel: parseNumber(fields.get('RF_LVL_A') ?? fields.get('RF_LVL')),
       audioLevelDb: parseShureAudioLevel(fields.get('AUDIO_LVL')),
-      batteryPercent: parsePercent(fields.get('BATT_CHARGE')),
-      batteryMinutesRemaining: parseMinutes(fields.get('BATT_RUN_TIME')),
+      batteryPercent: parseNumber(fields.get('BATT_CHARGE')),
+      batteryMinutesRemaining: parseNumber(fields.get('BATT_RUN_TIME')),
       antenna: parseAntenna(fields.get('ANTENNA'))
     }
 
@@ -170,13 +190,7 @@ class ShureDeviceClient extends EventEmitter {
   }
 }
 
-function parsePercent(raw: string | undefined): number | null {
-  if (raw === undefined) return null
-  const value = Number(raw)
-  return Number.isFinite(value) ? value : null
-}
-
-function parseMinutes(raw: string | undefined): number | null {
+function parseNumber(raw: string | undefined): number | null {
   if (raw === undefined) return null
   const value = Number(raw)
   return Number.isFinite(value) ? value : null

@@ -29,19 +29,9 @@ export interface DiscoveredDevice {
   lastSeen: number
 }
 
-export interface UsbRoute {
-  id: string
-  inputDeviceId: string
-  inputChannel: number
-  label: string
-  levelDb: number | null
-}
-
 export type MainToRendererEvent =
   | { type: 'device-updated'; device: DiscoveredDevice }
   | { type: 'device-removed'; deviceId: string }
-  | { type: 'usb-route-updated'; route: UsbRoute }
-  | { type: 'discovery-status'; scanning: boolean; message?: string }
   | { type: 'audio-chunk'; channelId: string; samples: Float32Array; sampleRate: number }
 
 export interface CompanionButtonLocation {
