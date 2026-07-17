@@ -17,7 +17,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # 22+ required: npm test uses --experimental-strip-types (added in 22.6, absent in 20).
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
