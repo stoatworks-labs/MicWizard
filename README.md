@@ -216,6 +216,66 @@ enabled: see [docs/data-captures.md](docs/data-captures.md) for exactly what
 packet capture would help, and how to take one - it's simpler than it sounds,
 no special network gear or bridging required.
 
+## Unsigned builds — macOS Gatekeeper & Windows SmartScreen
+
+The release builds are **not code-signed or notarized** — that needs paid Apple
+/ Windows developer certificates this project doesn't carry. The app is safe to
+run; the OS just can't verify a publisher, so it warns you the first time.
+Here's how to get past that, and how to sign it yourself if you'd rather.
+
+### macOS
+
+Delivered as a `.dmg`/`.zip`. On first launch macOS says the app **"is damaged
+and can't be opened"** or **"cannot be opened because the developer cannot be
+verified"** — that's Gatekeeper reacting to the missing signature, not an actual
+problem.
+
+Easiest fix: **right-click (Control-click) the app in Applications → Open →
+Open**. You only do this once. If it still says *"damaged"* (common when the
+`.dmg` came through a browser), clear the quarantine flag in Terminal:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/MicWizard.app"
+```
+
+### Windows
+
+The installer is an unsigned `.exe`, so SmartScreen shows **"Windows protected
+your PC"** → click **More info → Run anyway**. (Right-click → **Properties** →
+**Unblock** also works.)
+
+### Linux
+
+`.AppImage`: `chmod +x` it and run. `.deb`: `sudo apt install ./<file>.deb`. No
+signing gate.
+
+### Signing it yourself (optional)
+
+macOS ad-hoc (local only, not notarized):
+
+```sh
+codesign --force --deep --sign - "/Applications/MicWizard.app"
+```
+
+To ship without warnings you need an **Apple Developer Program** membership
+($99/yr) + a *Developer ID Application* certificate, then sign with the hardened
+runtime and notarize:
+
+```sh
+codesign --force --deep --options runtime --timestamp \
+  --sign "Developer ID Application: Your Name (TEAMID)" "MicWizard.app"
+ditto -c -k --keepParent "MicWizard.app" "MicWizard.zip"
+xcrun notarytool submit "MicWizard.zip" --apple-id you@example.com \
+  --team-id TEAMID --password APP_SPECIFIC_PASSWORD --wait
+xcrun stapler staple "MicWizard.app"
+```
+
+electron-builder does all of this for you if you set `CSC_LINK`,
+`CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` and
+`APPLE_TEAM_ID`. On Windows, clearing SmartScreen needs an Authenticode
+code-signing certificate (`signtool sign`, or `CSC_LINK`/`CSC_KEY_PASSWORD` for
+electron-builder).
+
 ## Roadmap / TODO
 
 - [ ] **Validate discovery/metering against real hardware** — Shure and Sennheiser adapters are documented/speculative but untested on real receivers; AES67 decode verified only against a synthetic sender.
