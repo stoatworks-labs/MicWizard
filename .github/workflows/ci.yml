@@ -1,0 +1,33 @@
+name: ci
+
+# Fast feedback on every push/PR: typecheck, production build, and the
+# automated test suite. Separate from release.yml, which only runs on a
+# version tag or manual dispatch and does the much heavier job of
+# packaging installers for all three platforms.
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test

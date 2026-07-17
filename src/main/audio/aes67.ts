@@ -1,5 +1,5 @@
 import dgram from 'node:dgram'
-import { computeLevels, LevelSmoother } from './levels'
+import { computeLevels, LevelSmoother } from './levels.ts'
 import type { Aes67SessionInfo } from './sap'
 
 const RTP_HEADER_BYTES = 12
@@ -61,8 +61,8 @@ export function monitorAes67Stream(
   }
 }
 
-/** Deinterleaves one RTP packet's PCM payload into per-channel Float32Arrays in [-1, 1] */
-function decodeRtpAudio(
+/** Deinterleaves one RTP packet's PCM payload into per-channel Float32Arrays in [-1, 1]. Exported for unit testing. */
+export function decodeRtpAudio(
   packet: Buffer,
   bytesPerSample: number,
   channelCount: number

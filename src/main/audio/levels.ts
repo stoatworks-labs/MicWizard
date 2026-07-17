@@ -28,7 +28,13 @@ export function computeLevels(samples: Float32Array): LevelReading {
 /** Simple exponential smoothing so meters don't jitter frame to frame */
 export class LevelSmoother {
   private value = SILENCE_FLOOR_DB
-  constructor(private readonly attack = 0.6, private readonly release = 0.15) {}
+  private readonly attack: number
+  private readonly release: number
+
+  constructor(attack = 0.6, release = 0.15) {
+    this.attack = attack
+    this.release = release
+  }
 
   push(db: number): number {
     const rate = db > this.value ? this.attack : this.release

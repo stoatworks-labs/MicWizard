@@ -2,7 +2,7 @@ import net from 'node:net'
 import os from 'node:os'
 import { EventEmitter } from 'node:events'
 import type { DeviceRegistry } from '../deviceRegistry'
-import type { DeviceChannel } from '../../shared/types'
+import { extractFramedMessages, parseShureMessage } from './shureProtocol'
 
 /**
  * Shure's "Command Strings" protocol: a plaintext ASCII protocol over TCP
@@ -12,7 +12,8 @@ import type { DeviceChannel } from '../../shared/types'
  * AUDIO_LVL, ANTENNA) match that documented format across ULX-D/QLX-D/
  * Axient Digital. NOT yet tested against real hardware in this project -
  * verify against your specific receiver's command-strings PDF before
- * relying on this. See docs/protocols.md.
+ * relying on this. See docs/protocols.md. Parsing logic lives in
+ * shureProtocol.ts so it's unit-testable without a real TCP connection.
  *
  * Shure receivers don't advertise via mDNS in a documented way, so
  * discovery here is a TCP connect-scan of the local /24 on port 2202,
@@ -135,47 +136,18 @@ class ShureDeviceClient extends EventEmitter {
   }
 
   private handleData(chunk: string): void {
-    this.buffer += chunk
-    for (;;) {
-      const start = this.buffer.indexOf('<')
-      if (start === -1) {
-        this.buffer = '' // no message start pending - drop any stray leading garbage
-        return
-      }
-      // Search for '>' from `start`, not from the top of the buffer: a
-      // stray '>' earlier than the first '<' would otherwise make `end`
-      // land before `start` and stall parsing forever on that leftover byte.
-      const end = this.buffer.indexOf('>', start)
-      if (end === -1) return // incomplete message, wait for more data
-      this.handleMessage(this.buffer.slice(start + 1, end).trim())
-      this.buffer = this.buffer.slice(end + 1)
-    }
+    const { messages, remainder } = extractFramedMessages(this.buffer + chunk)
+    this.buffer = remainder
+    for (const message of messages) this.handleMessage(message)
   }
 
   private handleMessage(message: string): void {
-    // e.g. "REP 1 BATT_CHARGE 087" or "SAMPLE 1 RF_LVL_A 072 RF_LVL_B 065 AUDIO_LVL 054"
-    const parts = message.split(/\s+/)
-    const [kind, channelNum, ...rest] = parts
-    if (kind !== 'REP' && kind !== 'SAMPLE') return
-
-    const fields = new Map<string, string>()
-    for (let i = 0; i < rest.length - 1; i += 2) {
-      fields.set(rest[i], rest[i + 1])
-    }
-
-    const channel: DeviceChannel = {
-      id: `${this.deviceId}:${channelNum}`,
-      name: fields.get('CHAN_NAME') ?? `Channel ${channelNum}`,
-      rfLevel: parseNumber(fields.get('RF_LVL_A') ?? fields.get('RF_LVL')),
-      audioLevelDb: parseShureAudioLevel(fields.get('AUDIO_LVL')),
-      batteryPercent: parseNumber(fields.get('BATT_CHARGE')),
-      batteryMinutesRemaining: parseNumber(fields.get('BATT_RUN_TIME')),
-      antenna: parseAntenna(fields.get('ANTENNA'))
-    }
+    const parsed = parseShureMessage(message, this.deviceId)
+    if (!parsed) return
 
     const existing = this.registry.get(this.deviceId)
-    const channels = existing?.channels.filter((c) => c.id !== channel.id) ?? []
-    channels.push(channel)
+    const channels = existing?.channels.filter((c) => c.id !== parsed.channel.id) ?? []
+    channels.push(parsed.channel)
 
     this.registry.upsert({
       id: this.deviceId,
@@ -188,25 +160,4 @@ class ShureDeviceClient extends EventEmitter {
       channels
     })
   }
-}
-
-function parseNumber(raw: string | undefined): number | null {
-  if (raw === undefined) return null
-  const value = Number(raw)
-  return Number.isFinite(value) ? value : null
-}
-
-/** Shure reports AUDIO_LVL as a 0-100+ code, not literal dBFS - this is an approximation pending real-hardware calibration */
-function parseShureAudioLevel(raw: string | undefined): number | null {
-  if (raw === undefined) return null
-  const value = Number(raw)
-  if (!Number.isFinite(value)) return null
-  return value - 100
-}
-
-function parseAntenna(raw: string | undefined): DeviceChannel['antenna'] {
-  if (raw === 'A') return 'A'
-  if (raw === 'B') return 'B'
-  if (raw === 'DIVERSITY') return 'diversity'
-  return null
 }
