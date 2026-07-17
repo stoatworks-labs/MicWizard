@@ -1,5 +1,7 @@
 # MicWizard
 
+[![ci](https://github.com/allansargeant/MicWizard/actions/workflows/ci.yml/badge.svg)](https://github.com/allansargeant/MicWizard/actions/workflows/ci.yml)
+
 > **AI-assisted project.** This codebase was created with [Claude Code](https://claude.com/claude-code)
 > (Anthropic). Protocol adapters are built against a mix of publicly documented specs
 > and best-effort reverse engineering - each adapter's module doc comment says which,
@@ -54,7 +56,11 @@ What's implemented and structurally complete:
   subnet TCP scan on port 2202, ASCII command protocol, battery/RF/audio metering.
   Built from Shure's publicly documented per-product "Command Strings" PDFs.
 - **Sennheiser SSC adapter** ([src/main/discovery/sennheiser.ts](src/main/discovery/sennheiser.ts)) -
-  more speculative than Shure; see the file's doc comment.
+  mDNS finds the `_ssc._tcp` service and this opens the real SSC connection
+  to it (that wiring was originally missing - mDNS was upserting a bare
+  placeholder and nothing ever connected; fixed). The connection itself,
+  and the exact metering field paths, are still more speculative than
+  Shure's - see the file's doc comment.
 - **USB input metering** ([src/renderer/src/audio/usbAudio.ts](src/renderer/src/audio/usbAudio.ts)) -
   Web Audio API capture + level metering, no native audio addon required.
 - **Local headphone/speaker monitoring** ([src/renderer/src/audio/monitorEngine.ts](src/renderer/src/audio/monitorEngine.ts)) -
@@ -177,6 +183,24 @@ first launch you'll see "No devices found yet" until something on your LAN
 responds - AES67 devices need AES67 mode enabled in Dante Controller (it's off by
 default), and Shure receivers need to be on the same /24 subnet as your machine
 (see the discovery scan's limitation note in `shure.ts`).
+
+### Testing
+
+```
+npm test
+```
+
+Runs the automated suite (`node`'s built-in test runner, no extra
+dependency) - 51 tests covering the pure logic that's actually testable
+without real hardware: level/dB math, SDP parsing, RTP payload decode
+(including L24 sign extension and short-frame handling), the Shure
+Command Strings buffer framer and message parser, and Companion config
+validation. One test (`test/integration.aes67-pipeline.test.mts`) is a
+real end-to-end check over loopback UDP multicast rather than a mock -
+it hand-crafts a SAP announcement and RTP packets the same way a real
+Dante sender would and checks the decoded sample amplitude against a
+known input. `npm run typecheck`, `npm run build`, and `npm test` all
+run on every push via [ci.yml](.github/workflows/ci.yml).
 
 ## Protocol status
 
