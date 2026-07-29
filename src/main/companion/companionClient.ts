@@ -19,6 +19,19 @@ export class CompanionClient {
     return `http://${this.config.host}:${this.config.port}`
   }
 
+  /**
+   * Ask the user's Companion to make a route: set the four `<prefix>_*` custom
+   * variables describing it, then press the configured button.
+   *
+   * RESOLVING PROVES THE BUTTON WAS PRESSED, NOT THAT A ROUTE HAPPENED. What
+   * the button does is entirely the user's own Companion configuration, and a
+   * button that is unconfigured, mis-wired, or reading a different variable
+   * prefix succeeds here and changes nothing. There is no feedback path — this
+   * app cannot read back whether the crosspoint exists.
+   *
+   * Order matters: all four variables are set before the press, because the
+   * button reads them at press time.
+   */
   async makeCrosspoint(request: CrosspointRequest): Promise<void> {
     const prefix = this.config.variablePrefix
     await this.setCustomVariable(`${prefix}_src_channel`, request.sourceChannel)
@@ -28,6 +41,14 @@ export class CompanionClient {
     await this.pressButton(this.config.makeCrosspointButton)
   }
 
+  /**
+   * Ask Companion to clear a route. Only the destination is set, since that is
+   * what identifies a crosspoint to remove.
+   *
+   * Unlike makeCrosspoint this one CAN fail usefully: a missing
+   * `clearCrosspointButton` throws rather than pressing something arbitrary.
+   * The same "pressed, not necessarily routed" caveat otherwise applies.
+   */
   async clearCrosspoint(destinationChannel: string, destinationDevice: string): Promise<void> {
     if (!this.config.clearCrosspointButton) {
       throw new Error('No clearCrosspointButton configured in companion-routes.json')
