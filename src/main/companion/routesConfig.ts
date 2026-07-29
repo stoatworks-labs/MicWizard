@@ -3,6 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import type { CompanionCrosspointConfig } from '../../shared/types'
 import { validateCompanionConfig } from './validateCompanionConfig'
+import { say } from '../diag/index.js'
 
 /**
  * Where the user's own companion-routes.json lives. Absence of this file
@@ -23,13 +24,13 @@ export function loadCompanionConfig(): CompanionCrosspointConfig | null {
   try {
     raw = JSON.parse(fs.readFileSync(configPath, 'utf8'))
   } catch (err) {
-    console.error(`[companion] failed to parse ${configPath}`, err)
+    say.error(`[companion] failed to parse ${configPath}`, err)
     return null
   }
 
   const parsed = validateCompanionConfig(raw)
   if (!parsed) {
-    console.error(`[companion] ${configPath} does not match the expected shape - see companion-routes.example.json`)
+    say.error(`[companion] ${configPath} does not match the expected shape - see companion-routes.example.json`)
     return null
   }
   return parsed

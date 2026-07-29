@@ -9,6 +9,26 @@ import { monitorAes67Stream } from './audio/aes67'
 import { loadCompanionConfig } from './companion/routesConfig'
 import { CompanionClient } from './companion/companionClient'
 import type { CompanionStatus, CrosspointRequest, MainToRendererEvent } from '../shared/types'
+import { collectDiagnostics, init as initDiag, say } from './diag/index.js'
+import { installElectronDiagnostics } from './diag/electron.js'
+
+// Before anything that can fail, so a failure during startup is logged and
+// captured like any other. An Electron app is several processes, so the
+// renderer and GPU hooks go in too - neither raises anything the main
+// process's uncaughtException handler can see.
+initDiag({
+  app: 'micwizard',
+  envPrefix: 'MICWIZARD',
+  version: '0.1.0',
+  cwd: app_diag_cwd()
+})
+installElectronDiagnostics()
+
+if (process.argv.includes('--collect-diagnostics')) {
+  // stdout, so it can be used in a script; logging went to stderr.
+  say.info(collectDiagnostics())
+  app.exit(0)
+}
 
 const registry = new DeviceRegistry()
 let broadcastEvent: ((event: MainToRendererEvent) => void) | null = null
@@ -173,4 +193,11 @@ function mergeChannels<T extends { id: string }>(existing: T[], incoming: T[]): 
   const byId = new Map(existing.map((c) => [c.id, c]))
   for (const channel of incoming) byId.set(channel.id, channel)
   return [...byId.values()]
+}
+
+
+/** Repo root when running from source; irrelevant once packaged, where
+ *  there is no .git and the git revision reads as 'unknown'. */
+function app_diag_cwd(): string {
+  return join(__dirname, '../../..')
 }

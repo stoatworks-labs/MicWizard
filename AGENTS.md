@@ -60,3 +60,11 @@ don't remove it as "unreferenced".
 ## 6. Conventions
 
 - "Commit" means commit **and** push.
+
+## Diagnostics
+
+Log via `say`/`log` from `src/main/diag/`, never `console`. `installElectronDiagnostics()`
+hooks `render-process-gone` and `child-process-gone` — a dead renderer raises nothing the
+main process's `uncaughtException` handler can see. `diag:collect` and `diag:openLogFolder`
+are registered over IPC but **no UI calls them yet**; wiring a button is outstanding.
+See [docs/diagnostics.md](docs/diagnostics.md).
