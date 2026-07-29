@@ -9,7 +9,7 @@ RF, monitoring audio, and triggering Dante routes through your own Companion.
 
 ### There is a successor
 
-**[RFutils](https://github.com/allansargeant/RFutils)** merged MicWizard, `wsm-wwb-bridge` and
+**[RFutils](https://github.com/stoatworks-labs/RFutils)** merged MicWizard, `wsm-wwb-bridge` and
 `pmse-to-wwb` into one suite, and MicWizard's functionality lives there as the **Monitor** tab.
 If you're choosing a tool rather than maintaining this one, start there.
 

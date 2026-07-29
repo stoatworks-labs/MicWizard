@@ -1,7 +1,7 @@
 # MicWizard — Interfaces
 
 > **Check first: is this repo still canonical?** MicWizard's functionality lives on in
-> **[RFutils](https://github.com/allansargeant/RFutils)** as the **Monitor** tab, which merged
+> **[RFutils](https://github.com/stoatworks-labs/RFutils)** as the **Monitor** tab, which merged
 > this app with `wsm-wwb-bridge` and `pmse-to-wwb`. Before extending anything here, confirm the
 > change belongs here rather than there — duplicating a fix across both is how the two silently
 > diverge.
