@@ -18,8 +18,8 @@ contribution to this project right now.
 
 ## How to capture these (simpler than it sounds)
 
-This author's [Dante-BabelBox](https://github.com/allansargeant/Dante-BabelBox)
-project has [OS-specific capture guides](https://github.com/allansargeant/Dante-BabelBox/tree/main/docs)
+This author's [Dante-BabelBox](https://github.com/stoatworks-labs/Dante-BabelBox)
+project has [OS-specific capture guides](https://github.com/stoatworks-labs/Dante-BabelBox/tree/main/docs)
 for a much harder problem: recording traffic between *two other devices* that
 don't know your laptop exists, which needs physically bridging your laptop
 inline between them with two network ports. **None of the captures above need

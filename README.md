@@ -1,6 +1,6 @@
 # MicWizard
 
-[![ci](https://github.com/allansargeant/MicWizard/actions/workflows/ci.yml/badge.svg)](https://github.com/allansargeant/MicWizard/actions/workflows/ci.yml)
+[![ci](https://github.com/stoatworks-labs/MicWizard/actions/workflows/ci.yml/badge.svg)](https://github.com/stoatworks-labs/MicWizard/actions/workflows/ci.yml)
 
 > **AI-assisted project.** This codebase was created with [Claude Code](https://claude.com/claude-code)
 > (Anthropic). Protocol adapters are built against a mix of publicly documented specs
@@ -21,8 +21,8 @@ instance - see below, and note that's a separate feature from local monitoring.
 (not a hand-drawn design), but no real hardware is on this network.*
 
 Same spirit as this author's other radio-mic tools -
-[wsm-wwb-bridge](https://github.com/allansargeant/wsm-wwb-bridge) (frequency
-coordination file exchange) and [Dante-BabelBox](https://github.com/allansargeant/Dante-BabelBox)
+[wsm-wwb-bridge](https://github.com/stoatworks-labs/wsm-wwb-bridge) (frequency
+coordination file exchange) and [Dante-BabelBox](https://github.com/stoatworks-labs/Dante-BabelBox)
 (cross-vendor Dante preamp control) - but for real-time monitoring instead of file
 exchange or gain control.
 

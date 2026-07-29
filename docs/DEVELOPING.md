@@ -8,7 +8,7 @@ Electron + TypeScript via electron-vite.
 
 > **MicWizard has a successor. Check whether your work belongs here at all.**
 
-**[RFutils](https://github.com/allansargeant/RFutils)** is a unified suite that merged MicWizard,
+**[RFutils](https://github.com/stoatworks-labs/RFutils)** is a unified suite that merged MicWizard,
 `wsm-wwb-bridge` and `pmse-to-wwb` into one package — MicWizard's functionality lives there as the
 **Monitor** tab, and logic and parsers were folded into it.
 
