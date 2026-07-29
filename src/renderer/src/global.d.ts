@@ -10,6 +10,12 @@ declare global {
       clearCrosspoint: (destinationChannel: string, destinationDevice: string) => Promise<void>
       startAudioMonitor: (channelId: string) => Promise<void>
       stopAudioMonitor: (channelId: string) => Promise<void>
+      diag: {
+        /** Write one JSON file describing the app's state and return its path. */
+        collect: () => Promise<string>
+        /** Reveal the log folder in the OS file manager. */
+        openLogFolder: () => Promise<string>
+      }
     }
   }
 }

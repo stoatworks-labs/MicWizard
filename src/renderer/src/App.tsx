@@ -3,6 +3,7 @@ import { connectDeviceStore, useDeviceStore } from './store'
 import { DeviceList } from './components/DeviceList'
 import { RoutingPanel } from './components/RoutingPanel'
 import { MonitorBar } from './components/MonitorBar'
+import { DiagnosticsPanel } from './components/DiagnosticsPanel'
 
 export function App(): JSX.Element {
   const devices = useDeviceStore((state) => [...state.devices.values()])
@@ -22,6 +23,7 @@ export function App(): JSX.Element {
         <MonitorBar />
         <DeviceList devices={devices} />
         <RoutingPanel />
+        <DiagnosticsPanel />
       </main>
     </div>
   )
