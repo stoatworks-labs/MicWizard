@@ -16,7 +16,13 @@ const api = {
   startAudioMonitor: (channelId: string): Promise<void> =>
     ipcRenderer.invoke('mic-monitor:start-audio-monitor', channelId),
   stopAudioMonitor: (channelId: string): Promise<void> =>
-    ipcRenderer.invoke('mic-monitor:stop-audio-monitor', channelId)
+    ipcRenderer.invoke('mic-monitor:stop-audio-monitor', channelId),
+  diag: {
+    /** Write one JSON file describing the app's state and return its path. */
+    collect: (): Promise<string> => ipcRenderer.invoke('diag:collect'),
+    /** Reveal the log folder in the OS file manager. */
+    openLogFolder: (): Promise<string> => ipcRenderer.invoke('diag:openLogFolder')
+  }
 }
 
 export type MicMonitorApi = typeof api
