@@ -202,6 +202,15 @@ Dante sender would and checks the decoded sample amplitude against a
 known input. `npm run typecheck`, `npm run build`, and `npm test` all
 run on every push via [ci.yml](.github/workflows/ci.yml).
 
+## Documentation
+
+| Doc | Contents |
+|---|---|
+| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | Finding receivers, local monitoring vs Companion routing, troubleshooting |
+| [docs/API.md](docs/API.md) | Shure Command Strings, Sennheiser SSC, the AES67 path, the Companion routes config, IPC |
+| [docs/DEVELOPING.md](docs/DEVELOPING.md) | Build and tests, the provenance rule, and the design boundaries to keep |
+| [docs/data-captures.md](docs/data-captures.md) | What packet capture would help, and how to take one |
+
 ## Protocol status
 
 | Vendor / transport | Discovery | Metering | Confidence |
