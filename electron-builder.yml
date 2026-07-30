@@ -11,23 +11,49 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 mac:
   category: public.app-category.music
+  # Ad-hoc sign every target. Without this electron-builder skips signing when
+  # no Developer ID is installed, and Gatekeeper then refuses the standalone
+  # arm64/x64 builds outright ("is damaged and can't be opened"). Ad-hoc plus
+  # the default hardened runtime also fails library validation at launch unless
+  # disable-library-validation is granted, hence the entitlements.
+  identity: '-'
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize: false
+  # Explicit arch lists: without them electron-builder builds only the host
+  # architecture, which silently yields half a release.
   target:
     - target: dmg
+      arch: [x64, arm64]
     - target: zip
-  notarize: false
+      arch: [x64, arm64]
+dmg:
+  artifactName: ${name}-${version}-${arch}.${ext}
 win:
   target:
     - target: nsis
+      arch: [x64, arm64]
+    - target: portable
+      arch: [x64, arm64]
+    - target: zip
+      arch: [x64, arm64]
 nsis:
   artifactName: ${name}-${version}-${arch}-setup.${ext}
   oneClick: false
   allowToChangeInstallationDirectory: true
+portable:
+  artifactName: ${name}-${version}-${arch}-portable.${ext}
 linux:
   category: AudioVideo
   maintainer: Allan Sargeant <allan.sargeant@gmail.com>
   target:
     - target: deb
+      arch: [x64, arm64]
     - target: rpm
+      arch: [x64, arm64]
     - target: AppImage
+      arch: [x64, arm64]
+appImage:
+  artifactName: ${name}-${version}-${arch}.${ext}
 npmRebuild: false
 publish: null
