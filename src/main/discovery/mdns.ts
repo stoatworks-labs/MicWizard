@@ -51,14 +51,40 @@ export function startMdnsDiscovery(
     return browser
   })
 
+  /**
+   * Re-assert every service still being advertised, and re-query for them.
+   *
+   * `up` fires once per service, but the registry's pruneStale() drops anything not
+   * re-upserted within its window - so a Dante device that was still sitting there
+   * happily advertising itself would silently disappear from the list a couple of
+   * minutes after it was found. Vendor adapters never hit this because their metering
+   * re-upserts constantly; an mDNS-only device has nothing else touching it.
+   *
+   * Reading the browser's own list rather than a cache of our own is what keeps this
+   * honest: bonjour expires a service on TTL or a goodbye packet and stops returning
+   * it, so a device that really has gone stops being refreshed and is pruned as
+   * intended.
+   */
+  const refreshTimer = setInterval(() => {
+    for (const browser of danteBrowsers) {
+      browser.update()
+      for (const service of browser.services) handleDanteService(registry, service)
+    }
+  }, REFRESH_INTERVAL_MS)
+
   return {
     stop: () => {
+      clearInterval(refreshTimer)
       sscBrowser.stop()
       for (const b of danteBrowsers) b.stop()
       bonjour.destroy()
     }
   }
 }
+
+/** Comfortably inside the registry's 120s staleness window, so a live device never
+ *  gets close to being pruned, without re-querying the network constantly. */
+const REFRESH_INTERVAL_MS = 30_000
 
 function serviceId(service: ServiceInfo): string {
   return `mdns:${service.fqdn}`
