@@ -5,7 +5,8 @@ import {
   parseAntenna,
   parseNumber,
   parseShureAudioLevel,
-  parseShureMessage
+  parseShureMessage,
+  subnetHostsFor
 } from '../src/main/discovery/shureProtocol.ts'
 
 test('extractFramedMessages: parses a single complete message', () => {
@@ -105,4 +106,71 @@ test('parseAntenna: maps known codes, null for anything else', () => {
   assert.equal(parseAntenna('DIVERSITY'), 'diversity')
   assert.equal(parseAntenna('WEIRD'), null)
   assert.equal(parseAntenna(undefined), null)
+})
+
+test('subnetHostsFor: sweeps every attached subnet, not just the first', () => {
+  // The regression this guards: taking only the first non-internal interface meant a
+  // Parallels bridge (or any VPN) shadowed the real LAN and discovery found nothing.
+  const hosts = subnetHostsFor([
+    { family: 'IPv4', address: '10.211.55.2', netmask: '255.255.255.0', internal: false },
+    { family: 'IPv4', address: '192.168.1.90', netmask: '255.255.255.0', internal: false }
+  ])
+  assert.equal(hosts.length, 253 * 2)
+  assert.ok(hosts.includes('10.211.55.1'))
+  assert.ok(hosts.includes('192.168.1.90'))
+  assert.ok(hosts.includes('192.168.1.253'))
+})
+
+test('subnetHostsFor: skips loopback, IPv6 and point-to-point interfaces', () => {
+  const hosts = subnetHostsFor([
+    { family: 'IPv4', address: '127.0.0.1', netmask: '255.0.0.0', internal: true },
+    { family: 'IPv6', address: 'fe80::1', netmask: 'ffff:ffff:ffff:ffff::', internal: false },
+    // A VPN tunnel: a /32 has no neighbours to sweep.
+    { family: 'IPv4', address: '100.111.187.92', netmask: '255.255.255.255', internal: false }
+  ])
+  assert.deepEqual(hosts, [])
+})
+
+test('subnetHostsFor: does not scan the same /24 twice when two interfaces share it', () => {
+  const hosts = subnetHostsFor([
+    { family: 'IPv4', address: '192.168.1.90', netmask: '255.255.255.0', internal: false },
+    { family: 'IPv4', address: '192.168.1.91', netmask: '255.255.255.0', internal: false }
+  ])
+  assert.equal(hosts.length, 253)
+})
+
+test('parseShureMessage: a SAMPLE keeps fields it does not mention (regression)', () => {
+  // A receiver answers GET ALL with everything, but its periodic SAMPLE carries only
+  // the metered fields. Rebuilding the channel from the SAMPLE alone used to blank the
+  // name back to "Channel 1" and drop the battery twice a second.
+  const full = parseShureMessage(
+    'REP 1 CHAN_NAME Lectern BATT_CHARGE 018 BATT_RUN_TIME 046 RF_LVL_A 055 ANTENNA B AUDIO_LVL 054',
+    'shure:10.0.0.5'
+  )
+  assert.ok(full)
+
+  const sampled = parseShureMessage('SAMPLE 1 RF_LVL_A 072 AUDIO_LVL 090', 'shure:10.0.0.5', full.channel)
+  assert.ok(sampled)
+  assert.equal(sampled.channel.name, 'Lectern')
+  assert.equal(sampled.channel.batteryPercent, 18)
+  assert.equal(sampled.channel.batteryMinutesRemaining, 46)
+  assert.equal(sampled.channel.antenna, 'B')
+  // ...while the metered fields in the message do update.
+  assert.equal(sampled.channel.rfLevel, 72)
+  assert.equal(sampled.channel.audioLevelDb, -10)
+})
+
+test('parseShureMessage: a field present in the message wins over what was known', () => {
+  const known = parseShureMessage('REP 1 CHAN_NAME Old BATT_CHARGE 090', 'shure:10.0.0.5')
+  const next = parseShureMessage('REP 1 CHAN_NAME New BATT_CHARGE 012', 'shure:10.0.0.5', known!.channel)
+  assert.equal(next!.channel.name, 'New')
+  assert.equal(next!.channel.batteryPercent, 12)
+})
+
+test('parseShureMessage: with nothing known, absent fields are still null', () => {
+  const parsed = parseShureMessage('SAMPLE 2 AUDIO_LVL 054', 'shure:10.0.0.5')
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Channel 2')
+  assert.equal(parsed.channel.batteryPercent, null)
+  assert.equal(parsed.channel.rfLevel, null)
 })

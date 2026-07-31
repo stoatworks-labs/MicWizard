@@ -2,7 +2,7 @@ import net from 'node:net'
 import os from 'node:os'
 import { EventEmitter } from 'node:events'
 import type { DeviceRegistry } from '../deviceRegistry'
-import { extractFramedMessages, parseShureMessage } from './shureProtocol'
+import { extractFramedMessages, parseShureMessage, subnetHostsFor } from './shureProtocol'
 
 /**
  * Shure's "Command Strings" protocol: a plaintext ASCII protocol over TCP
@@ -16,10 +16,10 @@ import { extractFramedMessages, parseShureMessage } from './shureProtocol'
  * shureProtocol.ts so it's unit-testable without a real TCP connection.
  *
  * Shure receivers don't advertise via mDNS in a documented way, so
- * discovery here is a TCP connect-scan of the local /24 on port 2202,
- * confirmed by a real protocol handshake (GET ALL must get a REP back).
- * This only covers one local subnet: fine for a single-room rack, not for
- * multi-subnet venues.
+ * discovery here is a TCP connect-scan on port 2202, confirmed by a real
+ * protocol handshake (GET ALL must get a REP back). Every directly-attached
+ * IPv4 subnet is swept (see subnetHostsFor) - still only what this machine is
+ * on, so a multi-subnet venue needs a receiver reachable from one of them.
  */
 const SHURE_COMMAND_PORT = 2202
 const CONNECT_TIMEOUT_MS = 300
@@ -68,15 +68,7 @@ export function startShureDiscovery(registry: DeviceRegistry): ShureDiscoveryHan
 }
 
 function localSubnetHosts(): string[] {
-  const interfaces = os.networkInterfaces()
-  for (const entries of Object.values(interfaces)) {
-    for (const entry of entries ?? []) {
-      if (entry.family !== 'IPv4' || entry.internal) continue
-      const prefix = entry.address.split('.').slice(0, 3).join('.')
-      return Array.from({ length: 253 }, (_, i) => `${prefix}.${i + 1}`)
-    }
-  }
-  return []
+  return subnetHostsFor(Object.values(os.networkInterfaces()).flatMap((entries) => entries ?? []))
 }
 
 function probe(host: string): Promise<boolean> {
@@ -142,10 +134,15 @@ class ShureDeviceClient extends EventEmitter {
   }
 
   private handleMessage(message: string): void {
-    const parsed = parseShureMessage(message, this.deviceId)
+    const existing = this.registry.get(this.deviceId)
+    // The channel as last understood, so fields this message does not mention survive
+    // it - a SAMPLE only carries the metered ones. See parseShureMessage.
+    const channelNum = message.split(/\s+/)[1]
+    const known = existing?.channels.find((c) => c.id === `${this.deviceId}:${channelNum}`)
+
+    const parsed = parseShureMessage(message, this.deviceId, known)
     if (!parsed) return
 
-    const existing = this.registry.get(this.deviceId)
     const channels = existing?.channels.filter((c) => c.id !== parsed.channel.id) ?? []
     channels.push(parsed.channel)
 

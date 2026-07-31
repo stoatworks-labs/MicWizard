@@ -37,8 +37,22 @@ export interface ParsedShureMessage {
   channel: DeviceChannel
 }
 
-/** Parses one already-unframed message body, e.g. "REP 1 BATT_CHARGE 087" or "SAMPLE 1 RF_LVL_A 072 AUDIO_LVL 054" */
-export function parseShureMessage(message: string, deviceId: string): ParsedShureMessage | null {
+/**
+ * Parses one already-unframed message body, e.g. "REP 1 BATT_CHARGE 087" or
+ * "SAMPLE 1 RF_LVL_A 072 AUDIO_LVL 054".
+ *
+ * @p known is the channel as last understood, and anything this message does not
+ * mention is carried over from it. That is not an optimisation: a receiver answers
+ * `GET ALL` with everything, but a periodic `SAMPLE` carries only the metered fields,
+ * so rebuilding the channel from one message alone made the channel name revert to
+ * "Channel 1" and the battery reading disappear at the metering rate. Omission means
+ * "unchanged" in this protocol, not "null".
+ */
+export function parseShureMessage(
+  message: string,
+  deviceId: string,
+  known?: DeviceChannel
+): ParsedShureMessage | null {
   const parts = message.split(/\s+/)
   const [kind, channelNum, ...rest] = parts
   if (kind !== 'REP' && kind !== 'SAMPLE') return null
@@ -49,14 +63,24 @@ export function parseShureMessage(message: string, deviceId: string): ParsedShur
     fields.set(rest[i], rest[i + 1])
   }
 
+  /** Present in this message wins; otherwise keep what was already known. */
+  const keep = <T>(present: boolean, value: T, previous: T | undefined): T =>
+    present ? value : (previous ?? value)
+
+  const rfPresent = fields.has('RF_LVL_A') || fields.has('RF_LVL')
+
   const channel: DeviceChannel = {
     id: `${deviceId}:${channelNum}`,
-    name: fields.get('CHAN_NAME') ?? `Channel ${channelNum}`,
-    rfLevel: parseNumber(fields.get('RF_LVL_A') ?? fields.get('RF_LVL')),
-    audioLevelDb: parseShureAudioLevel(fields.get('AUDIO_LVL')),
-    batteryPercent: parseNumber(fields.get('BATT_CHARGE')),
-    batteryMinutesRemaining: parseNumber(fields.get('BATT_RUN_TIME')),
-    antenna: parseAntenna(fields.get('ANTENNA'))
+    name: fields.get('CHAN_NAME') ?? known?.name ?? `Channel ${channelNum}`,
+    rfLevel: keep(rfPresent, parseNumber(fields.get('RF_LVL_A') ?? fields.get('RF_LVL')), known?.rfLevel),
+    audioLevelDb: keep(fields.has('AUDIO_LVL'), parseShureAudioLevel(fields.get('AUDIO_LVL')), known?.audioLevelDb),
+    batteryPercent: keep(fields.has('BATT_CHARGE'), parseNumber(fields.get('BATT_CHARGE')), known?.batteryPercent),
+    batteryMinutesRemaining: keep(
+      fields.has('BATT_RUN_TIME'),
+      parseNumber(fields.get('BATT_RUN_TIME')),
+      known?.batteryMinutesRemaining
+    ),
+    antenna: keep(fields.has('ANTENNA'), parseAntenna(fields.get('ANTENNA')), known?.antenna)
   }
 
   return { channelNum, channel }
@@ -81,4 +105,44 @@ export function parseAntenna(raw: string | undefined): DeviceChannel['antenna'] 
   if (raw === 'B') return 'B'
   if (raw === 'DIVERSITY') return 'diversity'
   return null
+}
+
+/** The shape of one os.networkInterfaces() entry we care about. */
+export interface NetworkInterfaceInfo {
+  family: string
+  address: string
+  netmask: string
+  internal: boolean
+}
+
+/**
+ * Every host address worth probing for a Shure receiver, across all local subnets.
+ *
+ * This used to take the *first* non-internal IPv4 interface and scan only that /24,
+ * which quietly scanned the wrong network on any machine with a VM bridge or a VPN
+ * client - exactly the laptop a show engineer turns up with. On this author's Mac the
+ * first interface is a Parallels bridge the host has no route to, so discovery found
+ * nothing at all while the real rack sat on en0.
+ *
+ * Point-to-point interfaces (a /32, as VPN tunnels present) are skipped: there is no
+ * subnet to sweep, and expanding one into 253 imaginary neighbours is pure delay.
+ * Subnets larger than a /24 are swept as their /24 only - a connect-scan of a /16 is
+ * 65k probes, which is not a discovery strategy.
+ */
+export function subnetHostsFor(interfaces: NetworkInterfaceInfo[]): string[] {
+  const hosts: string[] = []
+  const seenPrefixes = new Set<string>()
+
+  for (const entry of interfaces) {
+    if (entry.family !== 'IPv4' || entry.internal) continue
+    if (entry.netmask === '255.255.255.255') continue
+
+    const prefix = entry.address.split('.').slice(0, 3).join('.')
+    if (seenPrefixes.has(prefix)) continue
+    seenPrefixes.add(prefix)
+
+    for (let i = 1; i <= 253; i++) hosts.push(`${prefix}.${i}`)
+  }
+
+  return hosts
 }
