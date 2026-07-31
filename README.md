@@ -34,6 +34,62 @@ coordination file exchange) and [Dante-BabelBox](https://github.com/stoatworks-l
 (cross-vendor Dante preamp control) - but for real-time monitoring instead of file
 exchange or gain control.
 
+<!-- downloads:start -->
+
+## Download
+
+**[v0.1.1](https://github.com/stoatworks-labs/MicWizard/releases/tag/v0.1.1)** — prebuilt for macOS, Windows and Linux. Pick your platform:
+
+<details>
+<summary><b>macOS</b> — Apple Silicon, Intel</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| Apple Silicon · .dmg disk image | [`micwizard-0.1.1-arm64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-arm64.dmg) | 98 MB |
+| Intel · .dmg disk image | [`micwizard-0.1.1-x64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-x64.dmg) | 104 MB |
+| Apple Silicon · .pkg installer | [`micwizard-0.1.1-macos-arm64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-macos-arm64.pkg) | 98 MB |
+| Intel · .pkg installer | [`micwizard-0.1.1-macos-x64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-macos-x64.pkg) | 104 MB |
+| Apple Silicon · .zip archive | [`MicWizard-0.1.1-arm64-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/MicWizard-0.1.1-arm64-mac.zip) | 98 MB |
+| Intel · .zip archive | [`MicWizard-0.1.1-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/MicWizard-0.1.1-mac.zip) | 104 MB |
+
+</details>
+
+<details>
+<summary><b>Windows</b> — x64 & ARM64, x64, ARM64</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| x64 & ARM64 · .exe installer | [`micwizard-0.1.1-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-setup.exe) | 155 MB |
+| x64 · .exe installer | [`micwizard-0.1.1-x64-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-x64-setup.exe) | 79 MB |
+| ARM64 · .exe installer | [`micwizard-0.1.1-arm64-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-arm64-setup.exe) | 76 MB |
+| x64 & ARM64 · portable .exe | [`micwizard-0.1.1-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-portable.exe) | 155 MB |
+| x64 · portable .exe | [`micwizard-0.1.1-x64-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-x64-portable.exe) | 79 MB |
+| ARM64 · portable .exe | [`micwizard-0.1.1-arm64-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-arm64-portable.exe) | 76 MB |
+| x64 · .zip archive | [`MicWizard-0.1.1-win.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/MicWizard-0.1.1-win.zip) | 110 MB |
+| ARM64 · .zip archive | [`MicWizard-0.1.1-arm64-win.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/MicWizard-0.1.1-arm64-win.zip) | 112 MB |
+
+</details>
+
+<details>
+<summary><b>Linux</b> — x64, ARM64</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| x64 · .deb package (Debian/Ubuntu) | [`micwizard_0.1.1_amd64.deb`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard_0.1.1_amd64.deb) | 86 MB |
+| ARM64 · .deb package (Debian/Ubuntu) | [`micwizard_0.1.1_arm64.deb`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard_0.1.1_arm64.deb) | 81 MB |
+| x64 · .rpm package (Fedora/RHEL) | [`micwizard-0.1.1.x86_64.rpm`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1.x86_64.rpm) | 77 MB |
+| ARM64 · .rpm package (Fedora/RHEL) | [`micwizard-0.1.1.aarch64.rpm`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1.aarch64.rpm) | 72 MB |
+| x64 · AppImage | [`micwizard-0.1.1-x86_64.AppImage`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-x86_64.AppImage) | 110 MB |
+| ARM64 · AppImage | [`micwizard-0.1.1-arm64.AppImage`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.1/micwizard-0.1.1-arm64.AppImage) | 110 MB |
+
+</details>
+
+All builds, checksums and release notes: [github.com/stoatworks-labs/MicWizard/releases](https://github.com/stoatworks-labs/MicWizard/releases).
+
+These builds are unsigned, so macOS and Windows each warn once on first launch — see [Unsigned builds — Gatekeeper, SmartScreen & Defender Firewall](#unsigned-builds--gatekeeper-smartscreen--defender-firewall) for the one-time fix.
+
+<!-- downloads:end -->
+
 ## Architecture
 
 ```mermaid
@@ -73,7 +129,7 @@ What's implemented and structurally complete:
   Web Audio API capture + level metering, no native audio addon required.
 - **Local headphone/speaker monitoring** ([src/renderer/src/audio/monitorEngine.ts](src/renderer/src/audio/monitorEngine.ts)) -
   a headphone icon next to every channel cues that channel's audio to a local
-  output device you pick. See [Local monitoring](#local-monitoring-headphone-cue-not-dante-routing)
+  output device you pick. See [Local monitoring](#local-monitoring-headphone-cue---not-dante-routing)
   below - this is a different feature from the Companion-based Dante routing
   panel, and easy to conflate with it.
 
@@ -233,65 +289,25 @@ enabled: see [docs/data-captures.md](docs/data-captures.md) for exactly what
 packet capture would help, and how to take one - it's simpler than it sounds,
 no special network gear or bridging required.
 
-## Unsigned builds — macOS Gatekeeper & Windows SmartScreen
+## Unsigned builds — Gatekeeper, SmartScreen & Defender Firewall
 
-The release builds are **not code-signed or notarized** — that needs paid Apple
-/ Windows developer certificates this project doesn't carry. The app is safe to
-run; the OS just can't verify a publisher, so it warns you the first time.
-Here's how to get past that, and how to sign it yourself if you'd rather.
+The release binaries are **not code-signed or notarized** — that needs paid Apple
+and Microsoft developer certificates this project doesn't carry. The downloads are
+fine; the OS just can't identify the publisher, so it warns you the first time.
 
-### macOS
+- **macOS** — *"cannot be opened because the developer cannot be verified"*.
+  Right-click the app → **Open** → **Open**, or clear the flag:
+  `xattr -dr com.apple.quarantine "/Applications/MicWizard.app"`
+- **Windows** — SmartScreen shows *"Windows protected your PC"* →
+  **More info** → **Run anyway**.
+- **Windows Defender Firewall** — first launch pops *"Allow MicWizard to communicate on
+  these networks"*. Tick **Private** (and **Domain** on a managed network) — MicWizard
+  needs it to discover Shure and Sennheiser receivers and receive AES67 audio for
+  headphone cue. Deny it and the receiver list stays empty and metering never starts.
+- **Linux** — no signing gate.
 
-Delivered as a `.dmg`/`.zip`. On first launch macOS says the app **"is damaged
-and can't be opened"** or **"cannot be opened because the developer cannot be
-verified"** — that's Gatekeeper reacting to the missing signature, not an actual
-problem.
-
-Easiest fix: **right-click (Control-click) the app in Applications → Open →
-Open**. You only do this once. If it still says *"damaged"* (common when the
-`.dmg` came through a browser), clear the quarantine flag in Terminal:
-
-```sh
-xattr -dr com.apple.quarantine "/Applications/MicWizard.app"
-```
-
-### Windows
-
-The installer is an unsigned `.exe`, so SmartScreen shows **"Windows protected
-your PC"** → click **More info → Run anyway**. (Right-click → **Properties** →
-**Unblock** also works.)
-
-### Linux
-
-`.AppImage`: `chmod +x` it and run. `.deb`: `sudo apt install ./<file>.deb`. No
-signing gate.
-
-### Signing it yourself (optional)
-
-macOS ad-hoc (local only, not notarized):
-
-```sh
-codesign --force --deep --sign - "/Applications/MicWizard.app"
-```
-
-To ship without warnings you need an **Apple Developer Program** membership
-($99/yr) + a *Developer ID Application* certificate, then sign with the hardened
-runtime and notarize:
-
-```sh
-codesign --force --deep --options runtime --timestamp \
-  --sign "Developer ID Application: Your Name (TEAMID)" "MicWizard.app"
-ditto -c -k --keepParent "MicWizard.app" "MicWizard.zip"
-xcrun notarytool submit "MicWizard.zip" --apple-id you@example.com \
-  --team-id TEAMID --password APP_SPECIFIC_PASSWORD --wait
-xcrun stapler staple "MicWizard.app"
-```
-
-electron-builder does all of this for you if you set `CSC_LINK`,
-`CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` and
-`APPLE_TEAM_ID`. On Windows, clearing SmartScreen needs an Authenticode
-code-signing certificate (`signtool sign`, or `CSC_LINK`/`CSC_KEY_PASSWORD` for
-electron-builder).
+Per-artifact steps, self-signing, checksum verification and the Defender Firewall reset
+procedure: **[docs/UNSIGNED.md](docs/UNSIGNED.md)**.
 
 ## Roadmap / TODO
 
