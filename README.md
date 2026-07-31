@@ -15,6 +15,14 @@ analog-only receivers patched into a USB interface. Optional Dante route
 triggering is also available by pointing it at your own Bitfocus Companion
 instance - see below, and note that's a separate feature from local monitoring.
 
+[![Watch it running — 52 seconds](docs/video-thumb.png)](https://www.youtube.com/watch?v=eaK9vPy1WkA)
+
+*A 52-second tour of the real app. Every device in it was discovered over the real
+protocols - a fixture serving Shure Command Strings on TCP 2202, and two AES67 senders
+announcing over SAP and then sending real L24 RTP - so the discovery, parsing, decoding
+and metering are all the app's own. No wireless receiver was involved: see
+[Protocol status](#protocol-status).*
+
 ![MicWizard showing Shure and Sennheiser receivers, an AES67 console feed, local headphone monitoring, and the Companion routing panel](docs/screenshots/main-view.png)
 
 *Mockup with simulated data - captured from the real running app's own renderer
