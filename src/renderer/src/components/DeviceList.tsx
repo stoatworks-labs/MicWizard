@@ -9,7 +9,7 @@ const VENDOR_LABEL: Record<DiscoveredDevice['vendor'], string> = {
   'unknown-dante': 'Dante / AES67'
 }
 
-export function DeviceList({ devices }: { devices: DiscoveredDevice[] }): JSX.Element {
+export function DeviceList({ devices }: { devices: DiscoveredDevice[] }): React.JSX.Element {
   if (devices.length === 0) {
     return <p className="device-list__empty">No devices found yet. Scanning the local network…</p>
   }
