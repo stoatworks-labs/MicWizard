@@ -429,3 +429,18 @@ body {
   color: #9a9ca3;
   overflow-wrap: anywhere;
 }
+
+/* The header is a title and a line of prose, so the About trigger goes on its
+   own line under them rather than fighting the paragraph for the same row. */
+.app__header .about-btn {
+  margin-top: 6px;
+  padding: 4px 11px;
+  border: 1px solid #2a2f3d;
+  border-radius: 999px;
+  background: none;
+  color: #9aa1b2;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.app__header .about-btn:hover { color: #e8eef5; }
