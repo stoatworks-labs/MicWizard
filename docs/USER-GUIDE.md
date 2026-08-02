@@ -108,10 +108,10 @@ app but with no hardware on the network. Don't calibrate your expectations from 
 | **Sennheiser receiver found, but no readings** | Expected. Discovery is real; the metering paths are guesses and differ between EW-DX and Digital 6000 ([Two things before anything else](#two-things-before-anything-else)). |
 | **No AES67 sources at all** | AES67 isn't enabled on the Dante network, or SAP announcements aren't reaching this machine. |
 | **Levels look wrong on a real Dante sender** | The decode is verified against synthetic traffic only — L24 and unusual frame sizes are exactly the untested cases ([Two things before anything else](#two-things-before-anything-else)). |
-| **Headphone button does nothing audible** | Wrong output device selected above the device list ([Local monitoring — the headphone button](#local-monitoring-the-headphone-button)). |
-| **Headphone button didn't change what the room hears** | Correct — it's local only ([Local monitoring — the headphone button](#local-monitoring-the-headphone-button)). |
-| **Routing button "worked" but nothing routed** | The Companion button isn't wired up, or the variable prefix doesn't match. MicWizard reports the press, not the result ([Dante routing — it presses your Companion's buttons](#dante-routing-it-presses-your-companions-buttons)). |
-| **Companion never connects** | Companion's HTTP API is off, or the host/port is wrong ([Dante routing — it presses your Companion's buttons](#dante-routing-it-presses-your-companions-buttons)). |
+| **Headphone button does nothing audible** | Wrong output device selected above the device list ([Local monitoring — the headphone button](#local-monitoring--the-headphone-button)). |
+| **Headphone button didn't change what the room hears** | Correct — it's local only ([Local monitoring — the headphone button](#local-monitoring--the-headphone-button)). |
+| **Routing button "worked" but nothing routed** | The Companion button isn't wired up, or the variable prefix doesn't match. MicWizard reports the press, not the result ([Dante routing — it presses your Companion's buttons](#dante-routing--it-presses-your-companions-buttons)). |
+| **Companion never connects** | Companion's HTTP API is off, or the host/port is wrong ([Dante routing — it presses your Companion's buttons](#dante-routing--it-presses-your-companions-buttons)). |
 | **macOS says the app is damaged** | Unsigned build; see the README's Gatekeeper section. |
 
 ---
