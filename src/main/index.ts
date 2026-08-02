@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'node:path'
 import { DeviceRegistry } from './deviceRegistry'
 import { startMdnsDiscovery } from './discovery/mdns'
@@ -53,6 +53,14 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: false
     }
+  })
+
+  // An external link — the ones in the About dialog are the only ones here —
+  // belongs in the user's own browser. Without this, target="_blank" opens a
+  // chromeless Electron window with no way back, which is worse than nothing.
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:$/.test(new URL(url).protocol)) void shell.openExternal(url)
+    return { action: 'deny' }
   })
 
   broadcastEvent = (event: MainToRendererEvent) => win.webContents.send('mic-monitor:event', event)
