@@ -312,3 +312,7 @@ procedure: **[docs/UNSIGNED.md](docs/UNSIGNED.md)**.
 - [ ] **Correct the Sennheiser SSC metering paths** — currently best-effort guesses; needs a packet capture against real EW-DX/6000/9000 hardware.
 - [ ] **Full Dante API integration** — blocked on Audinate Developer Program approval (NDA/license); unlocks what AES67 can't reach.
 - [ ] **Glitch-free monitoring** — move headphone-cue playback from chunk-scheduled buffers to an AudioWorklet ring buffer for broadcast-grade audio.
+
+<!-- attributions:start -->
+This project is built on other people's work — see [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+<!-- attributions:end -->
