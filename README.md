@@ -45,11 +45,11 @@ exchange or gain control.
 
 | Build | Download | Size |
 | --- | --- | --- |
-| Apple Silicon · .dmg disk image | [`micwizard-0.1.2-arm64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/micwizard-0.1.2-arm64.dmg) | 111 MB |
+| Apple Silicon · .dmg disk image | [`micwizard-0.1.2-arm64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/micwizard-0.1.2-arm64.dmg) | 110 MB |
 | Intel · .dmg disk image | [`micwizard-0.1.2-x64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/micwizard-0.1.2-x64.dmg) | 118 MB |
-| Apple Silicon · .pkg installer | [`micwizard-0.1.2-macos-arm64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/micwizard-0.1.2-macos-arm64.pkg) | 111 MB |
+| Apple Silicon · .pkg installer | [`micwizard-0.1.2-macos-arm64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/micwizard-0.1.2-macos-arm64.pkg) | 110 MB |
 | Intel · .pkg installer | [`micwizard-0.1.2-macos-x64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/micwizard-0.1.2-macos-x64.pkg) | 118 MB |
-| Apple Silicon · .zip archive | [`MicWizard-0.1.2-arm64-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/MicWizard-0.1.2-arm64-mac.zip) | 111 MB |
+| Apple Silicon · .zip archive | [`MicWizard-0.1.2-arm64-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/MicWizard-0.1.2-arm64-mac.zip) | 110 MB |
 | Intel · .zip archive | [`MicWizard-0.1.2-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.1.2/MicWizard-0.1.2-mac.zip) | 118 MB |
 
 </details>
@@ -86,7 +86,7 @@ exchange or gain control.
 
 All builds, checksums and release notes: [github.com/stoatworks-labs/MicWizard/releases](https://github.com/stoatworks-labs/MicWizard/releases).
 
-These builds are unsigned, so macOS and Windows each warn once on first launch — see [Unsigned builds — Gatekeeper, SmartScreen & Defender Firewall](#unsigned-builds--gatekeeper-smartscreen--defender-firewall) for the one-time fix.
+macOS builds are signed and notarised and open normally. The Windows builds are unsigned, so SmartScreen warns once — see [Windows SmartScreen & Defender Firewall](#windows-smartscreen--defender-firewall) for the one-time click-through.
 
 <!-- downloads:end -->
 
