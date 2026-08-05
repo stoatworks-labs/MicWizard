@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # 22+ required: npm test uses --experimental-strip-types (added in 22.6, absent in 20).
           node-version: 22
