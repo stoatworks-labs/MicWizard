@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { listAudioOutputs } from '../audio/usbAudio'
 import { monitorEngine } from '../audio/monitorEngine'
 
-export function MonitorBar(): JSX.Element {
+export function MonitorBar(): React.JSX.Element {
   const [outputs, setOutputs] = useState<MediaDeviceInfo[]>([])
   const [outputId, setOutputId] = useState<string>('')
   const [solo, setSolo] = useState(monitorEngine.getSoloMode())
