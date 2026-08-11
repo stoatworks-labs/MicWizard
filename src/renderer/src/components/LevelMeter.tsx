@@ -1,7 +1,7 @@
 const MIN_DB = -60
 const MAX_DB = 0
 
-export function LevelMeter({ label, db }: { label: string; db: number | null }): JSX.Element {
+export function LevelMeter({ label, db }: { label: string; db: number | null }): React.JSX.Element {
   const clamped = db === null ? MIN_DB : Math.min(MAX_DB, Math.max(MIN_DB, db))
   const percent = ((clamped - MIN_DB) / (MAX_DB - MIN_DB)) * 100
   const zone = db === null ? 'off' : db > -3 ? 'hot' : db > -18 ? 'good' : 'low'

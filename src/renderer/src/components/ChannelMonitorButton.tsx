@@ -16,7 +16,7 @@ export function ChannelMonitorButton({
 }: {
   channel: DeviceChannel
   hasNetworkAudio: boolean
-}): JSX.Element {
+}): React.JSX.Element {
   const [monitoring, setMonitoring] = useState(monitorEngine.isMonitoring(channel.id))
   const [mappedDevice, setMappedDevice] = useState<string | null>(
     hasNetworkAudio ? null : getUsbDeviceForChannel(channel.id)

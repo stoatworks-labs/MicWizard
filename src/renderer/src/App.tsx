@@ -5,7 +5,7 @@ import { RoutingPanel } from './components/RoutingPanel'
 import { MonitorBar } from './components/MonitorBar'
 import { DiagnosticsPanel } from './components/DiagnosticsPanel'
 
-export function App(): JSX.Element {
+export function App(): React.JSX.Element {
   const devices = useDeviceStore((state) => [...state.devices.values()])
 
   useEffect(() => {

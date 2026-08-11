@@ -11,7 +11,7 @@ const FIELD_LABELS = {
   destinationDevice: 'Destination device'
 } as const
 
-export function RoutingPanel(): JSX.Element | null {
+export function RoutingPanel(): React.JSX.Element | null {
   const [status, setStatus] = useState<CompanionStatus | null>(null)
   const [fields, setFields] = useState({
     sourceChannel: '',

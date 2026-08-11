@@ -4,7 +4,7 @@ export function BatteryIndicator({
 }: {
   percent: number | null
   minutesRemaining: number | null
-}): JSX.Element {
+}): React.JSX.Element {
   const level = percent === null ? 'unknown' : percent < 20 ? 'low' : percent < 50 ? 'medium' : 'high'
 
   return (
