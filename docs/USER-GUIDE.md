@@ -112,7 +112,7 @@ app but with no hardware on the network. Don't calibrate your expectations from 
 | **Headphone button didn't change what the room hears** | Correct — it's local only ([Local monitoring — the headphone button](#local-monitoring--the-headphone-button)). |
 | **Routing button "worked" but nothing routed** | The Companion button isn't wired up, or the variable prefix doesn't match. MicWizard reports the press, not the result ([Dante routing — it presses your Companion's buttons](#dante-routing--it-presses-your-companions-buttons)). |
 | **Companion never connects** | Companion's HTTP API is off, or the host/port is wrong ([Dante routing — it presses your Companion's buttons](#dante-routing--it-presses-your-companions-buttons)). |
-| **macOS says the app is damaged** | Unsigned build; see the README's Gatekeeper section. |
+| **macOS says the app is damaged** | Not the released build — those are signed and notarised. A self-built or pre-notarisation copy is quarantined; see the README's Gatekeeper section. |
 
 ---
 
