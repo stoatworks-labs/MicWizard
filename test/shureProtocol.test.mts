@@ -174,3 +174,80 @@ test('parseShureMessage: with nothing known, absent fields are still null', () =
   assert.equal(parsed.channel.batteryPercent, null)
   assert.equal(parsed.channel.rfLevel, null)
 })
+
+/*
+ * A channel name is the operator's own text and routinely has spaces in it —
+ * "Lead Vox", "Pastor 1", "Radio 2". The body used to be split on whitespace
+ * and paired off two tokens at a time, which is only correct while every value
+ * is a single token: a name of n words contributed n tokens where the pairing
+ * expected one, so from that point every key was read as a value and every
+ * value as a key. BATT_CHARGE then looked absent, the carry-over kept the last
+ * reading, and the battery gauge froze — on a radio-mic monitor, the worst
+ * available way to fail. Every existing case here uses a single-word name,
+ * which is why none of them could see it.
+ */
+
+test('parseShureMessage: a multi-word channel name does not shift every later field', () => {
+  const parsed = parseShureMessage(
+    'REP 1 CHAN_NAME Lead Vox BATT_CHARGE 078 RF_LVL_A 055',
+    'shure:10.0.0.5'
+  )
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Lead Vox')
+  assert.equal(parsed.channel.batteryPercent, 78)
+  assert.equal(parsed.channel.rfLevel, 55)
+})
+
+test('parseShureMessage: a three-word name shifts nothing either', () => {
+  // An odd word count shifted the alignment differently again.
+  const parsed = parseShureMessage(
+    'REP 2 CHAN_NAME Stage Left Radio BATT_CHARGE 042 AUDIO_LVL 054',
+    'shure:10.0.0.5'
+  )
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Stage Left Radio')
+  assert.equal(parsed.channel.batteryPercent, 42)
+})
+
+test('parseShureMessage: a braced, space-padded name is unwrapped and trimmed', () => {
+  // The ULX-D/QLX-D/Axient form: brace-delimited and fixed-width, which is
+  // exactly why the protocol delimits it at all.
+  const parsed = parseShureMessage(
+    'REP 1 CHAN_NAME {Lead Vox            } BATT_CHARGE 078',
+    'shure:10.0.0.5'
+  )
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Lead Vox')
+  assert.equal(parsed.channel.batteryPercent, 78)
+})
+
+test('parseShureMessage: a name in braces with no spaces still works', () => {
+  const parsed = parseShureMessage('REP 1 CHAN_NAME {Lectern} RF_LVL_A 061', 'shure:10.0.0.5')
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Lectern')
+  assert.equal(parsed.channel.rfLevel, 61)
+})
+
+test('parseShureMessage: a multi-word name at the end of the message is kept whole', () => {
+  const parsed = parseShureMessage('REP 3 BATT_CHARGE 090 CHAN_NAME Pastor 1', 'shure:10.0.0.5')
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Pastor 1')
+  assert.equal(parsed.channel.batteryPercent, 90)
+})
+
+test('parseShureMessage: an empty reading is absent, not a flat battery', () => {
+  // parseNumber('') is Number('') is 0, so recording an empty value would
+  // report 0% rather than "no reading" and the carry-over would never fire.
+  const parsed = parseShureMessage('REP 1 BATT_CHARGE CHAN_NAME Lead Vox', 'shure:10.0.0.5', {
+    id: 'shure:10.0.0.5:1',
+    name: 'old',
+    rfLevel: null,
+    audioLevelDb: null,
+    batteryPercent: 55,
+    batteryMinutesRemaining: null,
+    antenna: null
+  })
+  assert.ok(parsed)
+  assert.equal(parsed.channel.name, 'Lead Vox')
+  assert.equal(parsed.channel.batteryPercent, 55, 'the previous reading is kept')
+})
