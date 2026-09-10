@@ -24,9 +24,9 @@ mac:
   # architecture, which silently yields half a release.
   target:
     - target: dmg
-      arch: [x64, arm64]
+      arch: [arm64, universal]
     - target: zip
-      arch: [x64, arm64]
+      arch: [arm64, universal]
 dmg:
   artifactName: ${name}-${version}-${arch}.${ext}
 win:
