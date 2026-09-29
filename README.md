@@ -2,8 +2,8 @@
 
 [![ci](https://github.com/stoatworks-labs/MicWizard/actions/workflows/ci.yml/badge.svg)](https://github.com/stoatworks-labs/MicWizard/actions/workflows/ci.yml)
 
-> **AI-assisted project.** This codebase was created with [Claude Code](https://claude.com/claude-code)
-> (Anthropic). Protocol adapters are built against a mix of publicly documented specs
+> **AI-assisted project.** This codebase was created with [Claude](https://claude.com/claude-code)
+> (Anthropic), directed and reviewed by a human author. Protocol adapters are built against a mix of publicly documented specs
 > and best-effort reverse engineering - each adapter's module doc comment says which,
 > and none of it has been validated against real hardware yet. See
 > [Protocol status](#protocol-status) before relying on this for a live show.
