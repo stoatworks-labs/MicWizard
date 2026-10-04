@@ -38,35 +38,35 @@ exchange or gain control.
 
 ## Download
 
-**[v0.2.1](https://github.com/stoatworks-labs/MicWizard/releases/tag/v0.2.1)** — prebuilt for macOS, Windows and Linux. Pick your platform:
+**[v0.2.2](https://github.com/stoatworks-labs/MicWizard/releases/tag/v0.2.2)** — prebuilt for macOS, Windows and Linux. Pick your platform:
 
 <details>
-<summary><b>macOS</b> — Apple Silicon, Intel</summary>
+<summary><b>macOS</b> — Universal (Apple Silicon + Intel), Apple Silicon, Intel</summary>
 
 | Build | Download | Size |
 | --- | --- | --- |
-| Apple Silicon · .dmg disk image | [`micwizard-0.2.1-arm64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-arm64.dmg) | 127 MB |
-| Intel · .dmg disk image | [`micwizard-0.2.1-x64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-x64.dmg) | 134 MB |
-| Apple Silicon · .pkg installer | [`micwizard-0.2.1-macos-arm64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-macos-arm64.pkg) | 128 MB |
-| Intel · .pkg installer | [`micwizard-0.2.1-macos-x64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-macos-x64.pkg) | 135 MB |
-| Apple Silicon · .zip archive | [`MicWizard-0.2.1-arm64-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/MicWizard-0.2.1-arm64-mac.zip) | 128 MB |
-| Intel · .zip archive | [`MicWizard-0.2.1-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/MicWizard-0.2.1-mac.zip) | 135 MB |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`micwizard-0.2.2-universal.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-universal.dmg) | 230 MB |
+| Apple Silicon · .dmg disk image | [`micwizard-0.2.2-arm64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-arm64.dmg) | 129 MB |
+| Intel · .dmg disk image | [`micwizard-0.2.2-x64.dmg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-x64.dmg) | 135 MB |
+| Universal (Apple Silicon + Intel) · .pkg installer | [`micwizard-0.2.2-macos-universal.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-macos-universal.pkg) | 230 MB |
+| Apple Silicon · .pkg installer | [`micwizard-0.2.2-macos-arm64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-macos-arm64.pkg) | 129 MB |
+| Intel · .pkg installer | [`micwizard-0.2.2-macos-x64.pkg`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-macos-x64.pkg) | 135 MB |
+| Apple Silicon · .zip archive | [`MicWizard-0.2.2-arm64-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/MicWizard-0.2.2-arm64-mac.zip) | 129 MB |
+| Intel · .zip archive | [`MicWizard-0.2.2-mac.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/MicWizard-0.2.2-mac.zip) | 135 MB |
 
 </details>
 
 <details>
-<summary><b>Windows</b> — x64 & ARM64, x64, ARM64</summary>
+<summary><b>Windows</b> — x64, ARM64</summary>
 
 | Build | Download | Size |
 | --- | --- | --- |
-| x64 & ARM64 · .exe installer | [`micwizard-0.2.1-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-setup.exe) | 217 MB |
-| x64 · .exe installer | [`micwizard-0.2.1-x64-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-x64-setup.exe) | 112 MB |
-| ARM64 · .exe installer | [`micwizard-0.2.1-arm64-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-arm64-setup.exe) | 106 MB |
-| x64 & ARM64 · portable .exe | [`micwizard-0.2.1-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-portable.exe) | 217 MB |
-| x64 · portable .exe | [`micwizard-0.2.1-x64-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-x64-portable.exe) | 112 MB |
-| ARM64 · portable .exe | [`micwizard-0.2.1-arm64-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-arm64-portable.exe) | 106 MB |
-| x64 · .zip archive | [`MicWizard-0.2.1-win.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/MicWizard-0.2.1-win.zip) | 154 MB |
-| ARM64 · .zip archive | [`MicWizard-0.2.1-arm64-win.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/MicWizard-0.2.1-arm64-win.zip) | 152 MB |
+| x64 · .exe installer | [`micwizard-0.2.2-x64-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-x64-setup.exe) | 113 MB |
+| ARM64 · .exe installer | [`micwizard-0.2.2-arm64-setup.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-arm64-setup.exe) | 106 MB |
+| x64 · portable .exe | [`micwizard-0.2.2-x64-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-x64-portable.exe) | 112 MB |
+| ARM64 · portable .exe | [`micwizard-0.2.2-arm64-portable.exe`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-arm64-portable.exe) | 106 MB |
+| x64 · .zip archive | [`MicWizard-0.2.2-win.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/MicWizard-0.2.2-win.zip) | 154 MB |
+| ARM64 · .zip archive | [`MicWizard-0.2.2-arm64-win.zip`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/MicWizard-0.2.2-arm64-win.zip) | 152 MB |
 
 </details>
 
@@ -75,12 +75,12 @@ exchange or gain control.
 
 | Build | Download | Size |
 | --- | --- | --- |
-| x64 · .deb package (Debian/Ubuntu) | [`micwizard_0.2.1_amd64.deb`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard_0.2.1_amd64.deb) | 100 MB |
-| ARM64 · .deb package (Debian/Ubuntu) | [`micwizard_0.2.1_arm64.deb`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard_0.2.1_arm64.deb) | 95 MB |
-| x64 · .rpm package (Fedora/RHEL) | [`micwizard-0.2.1.x86_64.rpm`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1.x86_64.rpm) | 89 MB |
-| ARM64 · .rpm package (Fedora/RHEL) | [`micwizard-0.2.1.aarch64.rpm`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1.aarch64.rpm) | 85 MB |
-| x64 · AppImage | [`micwizard-0.2.1-x86_64.AppImage`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-x86_64.AppImage) | 126 MB |
-| ARM64 · AppImage | [`micwizard-0.2.1-arm64.AppImage`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.1/micwizard-0.2.1-arm64.AppImage) | 127 MB |
+| x64 · .deb package (Debian/Ubuntu) | [`micwizard_0.2.2_amd64.deb`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard_0.2.2_amd64.deb) | 100 MB |
+| ARM64 · .deb package (Debian/Ubuntu) | [`micwizard_0.2.2_arm64.deb`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard_0.2.2_arm64.deb) | 95 MB |
+| x64 · .rpm package (Fedora/RHEL) | [`micwizard-0.2.2.x86_64.rpm`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2.x86_64.rpm) | 90 MB |
+| ARM64 · .rpm package (Fedora/RHEL) | [`micwizard-0.2.2.aarch64.rpm`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2.aarch64.rpm) | 85 MB |
+| x64 · AppImage | [`micwizard-0.2.2-x86_64.AppImage`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-x86_64.AppImage) | 126 MB |
+| ARM64 · AppImage | [`micwizard-0.2.2-arm64.AppImage`](https://github.com/stoatworks-labs/MicWizard/releases/download/v0.2.2/micwizard-0.2.2-arm64.AppImage) | 128 MB |
 
 </details>
 
